@@ -12,6 +12,20 @@ type UserRepository struct {
 	mock.Mock
 }
 
+// AddFollow provides a mock function with given fields: userId, currentId
+func (_m *UserRepository) AddFollow(userId string, currentId string) error {
+	ret := _m.Called(userId, currentId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(userId, currentId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Create provides a mock function with given fields: user
 func (_m *UserRepository) Create(user *model.User) (*model.User, error) {
 	ret := _m.Called(user)
@@ -79,6 +93,43 @@ func (_m *UserRepository) FindByID(uid string) (*model.User, error) {
 	}
 
 	return r0, r1
+}
+
+// FindByUsername provides a mock function with given fields: username
+func (_m *UserRepository) FindByUsername(username string) (*model.User, error) {
+	ret := _m.Called(username)
+
+	var r0 *model.User
+	if rf, ok := ret.Get(0).(func(string) *model.User); ok {
+		r0 = rf(username)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RemoveFollow provides a mock function with given fields: userId, currentId
+func (_m *UserRepository) RemoveFollow(userId string, currentId string) error {
+	ret := _m.Called(userId, currentId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(userId, currentId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // Update provides a mock function with given fields: user

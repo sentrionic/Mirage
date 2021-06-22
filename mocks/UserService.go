@@ -35,6 +35,20 @@ func (_m *UserService) ChangeAvatar(header *multipart.FileHeader, directory stri
 	return r0, r1
 }
 
+// ChangeFollow provides a mock function with given fields: user, current
+func (_m *UserService) ChangeFollow(user *model.User, current string) error {
+	ret := _m.Called(user, current)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*model.User, string) error); ok {
+		r0 = rf(user, current)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteImage provides a mock function with given fields: key
 func (_m *UserService) DeleteImage(key string) error {
 	ret := _m.Called(key)
@@ -47,6 +61,29 @@ func (_m *UserService) DeleteImage(key string) error {
 	}
 
 	return r0
+}
+
+// FindByUsername provides a mock function with given fields: username
+func (_m *UserService) FindByUsername(username string) (*model.User, error) {
+	ret := _m.Called(username)
+
+	var r0 *model.User
+	if rf, ok := ret.Get(0).(func(string) *model.User); ok {
+		r0 = rf(username)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Get provides a mock function with given fields: uid

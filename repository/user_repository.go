@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"regexp"
+	"strings"
 )
 
 // userRepository is data/repository implementation
@@ -51,6 +52,24 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 	return user, nil
 }
 
+func (r *userRepository) FindByUsername(username string) (*model.User, error) {
+	user := &model.User{}
+
+	// we need to actually check errors as it could be something other than not found
+	if err := r.DB.
+		Preload("Followers").
+		Preload("Followee").
+		Where("LOWER(username) = ?", strings.ToLower(username)).
+		First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return user, apperrors.NewNotFound("username", username)
+		}
+		return user, apperrors.NewInternal()
+	}
+
+	return user, nil
+}
+
 // Create inserts the user in the DB
 func (r *userRepository) Create(user *model.User) (*model.User, error) {
 	if result := r.DB.Create(&user); result.Error != nil {
@@ -77,4 +96,23 @@ func (r *userRepository) Update(user *model.User) error {
 func isDuplicateKeyError(err error) bool {
 	duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
 	return duplicate.MatchString(err.Error())
+}
+
+func (r *userRepository) AddFollow(userId, currentId string) error {
+	err := r.DB.Table("followers").Create(map[string]interface{}{
+		"user_id":     userId,
+		"follower_id": currentId,
+	}).Table("followee").Create(map[string]interface{}{
+		"followee_id": userId,
+		"user_id":     currentId,
+	}).Error
+	return err
+}
+
+func (r *userRepository) RemoveFollow(userId, currentId string) error {
+	err := r.DB.
+		Exec("DELETE FROM followers WHERE user_id = ? AND follower_id = ?", userId, currentId).
+		Exec("DELETE FROM followee WHERE followee_id = ? AND user_id = ?", userId, currentId).
+		Error
+	return err
 }

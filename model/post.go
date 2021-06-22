@@ -13,12 +13,12 @@ type PostResponse struct {
 	Author Profile `json:"author"`
 }
 
-func (post *Post) NewPostResponse() PostResponse {
+func (post *Post) NewPostResponse(id string) PostResponse {
 	return PostResponse{
 		ID:     post.ID,
 		Text:   post.Text,
 		File:   post.File,
-		Author: post.User.NewProfileResponse(),
+		Author: post.User.NewProfileResponse(id),
 	}
 }
 

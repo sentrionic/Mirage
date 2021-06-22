@@ -47,6 +47,13 @@ func NewHandler(c *Config) {
 	ag.PUT("", h.EditAccount)
 	ag.POST("/logout", h.Logout)
 
+	// User group
+	ug := c.R.Group("v1/profiles")
+	ug.GET("/:username", h.GetProfile)
+
+	ug.Use(middleware.AuthUser())
+	ug.POST("/:username/follow", h.ToggleFollow)
+
 	// Post group
 	pg := c.R.Group("v1/posts")
 
@@ -62,4 +69,18 @@ func setUserSession(c *gin.Context, id string) {
 	if err := session.Save(); err != nil {
 		fmt.Println(err)
 	}
+}
+
+var validImageTypes = map[string]bool{
+	"image/jpeg": true,
+	"image/png":  true,
+	"image/gif":  true,
+}
+
+// isAllowedImageType determines if image is among types defined
+// in map of allowed images
+func isAllowedImageType(mimeType string) bool {
+	_, exists := validImageTypes[mimeType]
+
+	return exists
 }

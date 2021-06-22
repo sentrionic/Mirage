@@ -91,3 +91,15 @@ func (s *userService) ChangeAvatar(header *multipart.FileHeader, directory strin
 func (s *userService) DeleteImage(key string) error {
 	return s.FileRepository.DeleteImage(key)
 }
+
+func (s *userService) FindByUsername(username string) (*model.User, error) {
+	return s.UserRepository.FindByUsername(username)
+}
+
+func (s *userService) ChangeFollow(user *model.User, current string) error {
+	if user.IsFollowing(current) {
+		return s.UserRepository.RemoveFollow(user.ID, current)
+	} else {
+		return s.UserRepository.AddFollow(user.ID, current)
+	}
+}

@@ -49,6 +49,41 @@ func TestGet(t *testing.T) {
 	})
 }
 
+func TestUserService_FindByUsername(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		mockUser := fixture.GetMockUser()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+		mockUserRepository.On("FindByUsername", mockUser.Username).Return(mockUser, nil)
+
+		u, err := us.FindByUsername(mockUser.Username)
+
+		assert.NoError(t, err)
+		assert.Equal(t, u, mockUser)
+		mockUserRepository.AssertExpectations(t)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		username := fixture.Username()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+
+		mockUserRepository.On("FindByUsername", username).Return(nil, fmt.Errorf("some error down the call chain"))
+
+		u, err := us.FindByUsername(username)
+
+		assert.Nil(t, u)
+		assert.Error(t, err)
+		mockUserRepository.AssertExpectations(t)
+	})
+}
+
 func TestRegister(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		uid, _ := GenerateId()
@@ -429,5 +464,77 @@ func TestUserService_ChangeAvatar(t *testing.T) {
 		assert.Error(t, err)
 		mockFileRepository.AssertCalled(t, "UploadAvatar", uploadFileArgs...)
 		mockUserRepository.AssertCalled(t, "Update", updateArgs...)
+	})
+}
+
+func TestUserService_ChangeFollow(t *testing.T) {
+	t.Run("Success change to following", func(t *testing.T) {
+		uid, _ := GenerateId()
+		mockUser := fixture.GetMockUser()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+		mockUserRepository.On("AddFollow", mockUser.ID, uid).Return(nil)
+
+		err := us.ChangeFollow(mockUser, uid)
+
+		assert.NoError(t, err)
+		mockUserRepository.AssertExpectations(t)
+		mockUserRepository.AssertNotCalled(t, "RemoveFollow", mockUser, uid)
+	})
+
+	t.Run("Success change to unfollowed", func(t *testing.T) {
+		current := fixture.GetMockUser()
+		mockUser := fixture.GetMockUser()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+		mockUserRepository.On("RemoveFollow", mockUser.ID, current.ID).Return(nil)
+
+		mockUser.Followers = append(mockUser.Followers, current)
+		err := us.ChangeFollow(mockUser, current.ID)
+
+		assert.NoError(t, err)
+		mockUserRepository.AssertExpectations(t)
+		mockUserRepository.AssertNotCalled(t, "AddFollow", mockUser, current.ID)
+	})
+
+	t.Run("Error from AddFollow", func(t *testing.T) {
+		current := fixture.GetMockUser()
+		mockUser := fixture.GetMockUser()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+
+		mockUserRepository.On("AddFollow", mockUser.ID, current.ID).Return(fmt.Errorf("some error down the call chain"))
+
+		err := us.ChangeFollow(mockUser, current.ID)
+
+		assert.Error(t, err)
+		mockUserRepository.AssertExpectations(t)
+	})
+
+	t.Run("Error from RemoveFollow", func(t *testing.T) {
+		current := fixture.GetMockUser()
+		mockUser := fixture.GetMockUser()
+
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+
+		mockUserRepository.On("RemoveFollow", mockUser.ID, current.ID).Return(fmt.Errorf("some error down the call chain"))
+
+		mockUser.Followers = append(mockUser.Followers, current)
+		err := us.ChangeFollow(mockUser, current.ID)
+
+		assert.Error(t, err)
+		mockUserRepository.AssertExpectations(t)
 	})
 }

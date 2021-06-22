@@ -104,7 +104,7 @@ func TestHandler_CreatePost(t *testing.T) {
 
 		router.ServeHTTP(rr, request)
 
-		respBody, _ := json.Marshal(mockPost.NewPostResponse())
+		respBody, _ := json.Marshal(mockPost.NewPostResponse(""))
 
 		assert.Equal(t, http.StatusCreated, rr.Code)
 		assert.Equal(t, respBody, rr.Body.Bytes())
@@ -204,7 +204,7 @@ func TestHandler_CreatePost(t *testing.T) {
 
 		router.ServeHTTP(rr, request)
 
-		respBody, _ := json.Marshal(mockPost.NewPostResponse())
+		respBody, _ := json.Marshal(mockPost.NewPostResponse(""))
 
 		assert.Equal(t, http.StatusCreated, rr.Code)
 		assert.Equal(t, respBody, rr.Body.Bytes())

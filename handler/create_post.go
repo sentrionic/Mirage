@@ -100,5 +100,5 @@ func (h *Handler) CreatePost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, post.NewPostResponse())
+	c.JSON(http.StatusCreated, post.NewPostResponse(""))
 }

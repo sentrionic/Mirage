@@ -31,16 +31,35 @@ type Profile struct {
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image"`
 	Bio         *string `json:"bio"`
+	Followers   uint    `json:"followers"`
+	Followee    uint    `json:"followee"`
+	Following   bool    `json:"following"`
 }
 
-func (user *User) NewProfileResponse() Profile {
+func (user *User) NewProfileResponse(id string) Profile {
 	return Profile{
 		ID:          user.ID,
 		Username:    user.Username,
 		DisplayName: user.DisplayName,
 		Image:       user.Image,
 		Bio:         user.Bio,
+		Followers:   uint(len(user.Followers)),
+		Followee:    uint(len(user.Followee)),
+		Following:   user.IsFollowing(id),
 	}
+}
+
+func (user *User) IsFollowing(id string) bool {
+	if id == "" {
+		return false
+	}
+
+	for _, v := range user.Followers {
+		if v.ID == id {
+			return true
+		}
+	}
+	return false
 }
 
 type User struct {
@@ -54,20 +73,27 @@ type User struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Posts       []Post
+	Followers   []*User `gorm:"many2many:followers" json:"-"`
+	Followee    []*User `gorm:"many2many:followee" json:"-"`
 }
 
 type UserService interface {
 	Get(uid string) (*User, error)
+	FindByUsername(username string) (*User, error)
 	Register(user *User) (*User, error)
 	Login(email, password string) (*User, error)
 	Update(user *User) error
 	ChangeAvatar(header *multipart.FileHeader, directory string) (string, error)
 	DeleteImage(key string) error
+	ChangeFollow(user *User, current string) error
 }
 
 type UserRepository interface {
 	FindByID(uid string) (*User, error)
 	FindByEmail(email string) (*User, error)
+	FindByUsername(username string) (*User, error)
 	Create(user *User) (*User, error)
 	Update(user *User) error
+	AddFollow(userId, currentId string) error
+	RemoveFollow(userId, currentId string) error
 }
