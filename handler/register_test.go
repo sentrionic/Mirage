@@ -56,6 +56,28 @@ func TestHandler_Register(t *testing.T) {
 			},
 		},
 		{
+			name: "OK with non alphanumeric display name",
+			body: gin.H{
+				"username":    user.Username,
+				"password":    user.Password,
+				"displayName": "Test User",
+				"email":       user.Email,
+			},
+			buildStubs: func(mockUserService *mocks.UserService) {
+				user.DisplayName = "Test User"
+				reqUser.DisplayName = "Test User"
+				mockUserService.On("Register", reqUser).Return(user, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
+				assert.Equal(t, http.StatusCreated, recorder.Code)
+				respBody, err := json.Marshal(user.NewAccountResponse())
+				assert.NoError(t, err)
+				assert.Equal(t, recorder.Body.Bytes(), respBody)
+				mockUserService.AssertCalled(t, "Register", reqUser)
+				assert.Contains(t, recorder.Header(), "Set-Cookie")
+			},
+		},
+		{
 			name: "InternalError",
 			body: gin.H{
 				"username":    user.Username,
@@ -90,6 +112,22 @@ func TestHandler_Register(t *testing.T) {
 			name: "Username too long",
 			body: gin.H{
 				"username":    fixture.RandStringRunes(20),
+				"password":    user.Password,
+				"displayName": user.DisplayName,
+				"email":       user.Email,
+			},
+			buildStubs: func(mockUserService *mocks.UserService) {
+				mockUserService.On("Register", mock.AnythingOfType("*model.User")).Return(nil, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+				mockUserService.AssertNotCalled(t, "Register")
+			},
+		},
+		{
+			name: "Username not alphanumeric",
+			body: gin.H{
+				"username":    "Test User",
 				"password":    user.Password,
 				"displayName": user.DisplayName,
 				"email":       user.Email,

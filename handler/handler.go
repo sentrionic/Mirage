@@ -12,12 +12,14 @@ import (
 
 type Handler struct {
 	UserService  model.UserService
+	PostService  model.PostService
 	MaxBodyBytes int64
 }
 
 type Config struct {
 	R               *gin.Engine
 	UserService     model.UserService
+	PostService     model.PostService
 	TimeoutDuration time.Duration
 	MaxBodyBytes    int64
 }
@@ -25,6 +27,7 @@ type Config struct {
 func NewHandler(c *Config) {
 	h := &Handler{
 		UserService:  c.UserService,
+		PostService:  c.PostService,
 		MaxBodyBytes: c.MaxBodyBytes,
 	}
 
@@ -32,7 +35,7 @@ func NewHandler(c *Config) {
 		c.R.Use(middleware.Timeout(c.TimeoutDuration, apperrors.NewServiceUnavailable()))
 	}
 
-	// Create an account group
+	// Account group
 	ag := c.R.Group("v1/accounts")
 
 	ag.POST("/register", h.Register)
@@ -43,6 +46,13 @@ func NewHandler(c *Config) {
 	ag.GET("", h.Current)
 	ag.PUT("", h.EditAccount)
 	ag.POST("/logout", h.Logout)
+
+	// Post group
+	pg := c.R.Group("v1/posts")
+
+	pg.Use(middleware.AuthUser())
+
+	pg.POST("", h.CreatePost)
 }
 
 // setUserSession saves the users ID in the session

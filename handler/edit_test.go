@@ -253,6 +253,15 @@ func TestHandler_EditAccount_BadRequest(t *testing.T) {
 			},
 		},
 		{
+			name: "Username not alpha numeric",
+			body: map[string][]string{
+				"email":       {fixture.Email()},
+				"username":    {"Test User"},
+				"displayName": {fixture.DisplayName()},
+				"bio":         {fixture.RandStringRunes(100)},
+			},
+		},
+		{
 			name: "DisplayName too short",
 			body: map[string][]string{
 				"email":       {fixture.Email()},

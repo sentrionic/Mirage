@@ -25,6 +25,7 @@ func inject(d *dataSources) (*gin.Engine, error) {
 	 * repository layer
 	 */
 	userRepository := repository.NewUserRepository(d.DB)
+	postRepository := repository.NewPostRepository(d.DB)
 
 	bucketName := os.Getenv("AWS_STORAGE_BUCKET_NAME")
 	fileRepository := repository.NewFileRepository(d.S3Session, bucketName)
@@ -34,6 +35,11 @@ func inject(d *dataSources) (*gin.Engine, error) {
 	 */
 	userService := service.NewUserService(&service.USConfig{
 		UserRepository: userRepository,
+		FileRepository: fileRepository,
+	})
+
+	postService := service.NewPostService(&service.PSConfig{
+		PostRepository: postRepository,
 		FileRepository: fileRepository,
 	})
 
@@ -82,6 +88,7 @@ func inject(d *dataSources) (*gin.Engine, error) {
 	handler.NewHandler(&handler.Config{
 		R:               router,
 		UserService:     userService,
+		PostService:     postService,
 		TimeoutDuration: time.Duration(ht) * time.Second,
 		MaxBodyBytes:    mbb,
 	})

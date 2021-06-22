@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/bwmarrin/snowflake"
+	"strings"
 )
 
 // GenerateId generates a snowflake id
@@ -27,4 +28,17 @@ func GetGravatar(email string) string {
 	hash := md5.Sum([]byte(email))
 	value := hex.EncodeToString(hash[:])
 	return fmt.Sprintf("https://gravatar.com/avatar/%s?d=identicon", value)
+}
+
+func GetHashtags(text string) []string {
+	list := make([]string, 0)
+	words := strings.Split(text, " ")
+	for _, word := range words {
+		word = strings.TrimSpace(word)
+		if strings.HasPrefix(word, "#") {
+			list = append(list, word)
+		}
+	}
+
+	return list
 }

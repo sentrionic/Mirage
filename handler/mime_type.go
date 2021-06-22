@@ -3,6 +3,7 @@ package handler
 var validImageTypes = map[string]bool{
 	"image/jpeg": true,
 	"image/png":  true,
+	"image/gif":  true,
 }
 
 // isAllowedImageType determines if image is among types defined

@@ -9,7 +9,7 @@ require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-contrib/sessions v0.0.3
 	github.com/gin-gonic/gin v1.7.2
-	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/go-playground/validator/v10 v10.6.1
 	github.com/go-redis/redis/v8 v8.10.0
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -17,6 +17,7 @@ require (
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.2
+	github.com/lucsky/cuid v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.6 // indirect

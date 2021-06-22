@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	validation "github.com/go-ozzo/ozzo-validation"
-	"github.com/go-ozzo/ozzo-validation/is"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/sentrionic/mirage/model"
 	"github.com/sentrionic/mirage/model/apperrors"
 	"log"
@@ -22,7 +22,7 @@ func (r registerReq) Validate() error {
 	return validation.ValidateStruct(&r,
 		validation.Field(&r.Email, validation.Required, is.Email),
 		validation.Field(&r.Username, validation.Required, validation.Length(4, 15), is.Alphanumeric),
-		validation.Field(&r.DisplayName, validation.Required, validation.Length(4, 50), is.Alphanumeric),
+		validation.Field(&r.DisplayName, validation.Required, validation.Length(4, 50)),
 		validation.Field(&r.Password, validation.Required, validation.Length(6, 150)),
 	)
 }

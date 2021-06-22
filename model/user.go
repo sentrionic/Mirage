@@ -25,6 +25,24 @@ func (user *User) NewAccountResponse() AccountResponse {
 	}
 }
 
+type Profile struct {
+	ID          string  `json:"id"`
+	Username    string  `json:"username"`
+	DisplayName string  `json:"displayName"`
+	Image       string  `json:"image"`
+	Bio         *string `json:"bio"`
+}
+
+func (user *User) NewProfileResponse() Profile {
+	return Profile{
+		ID:          user.ID,
+		Username:    user.Username,
+		DisplayName: user.DisplayName,
+		Image:       user.Image,
+		Bio:         user.Bio,
+	}
+}
+
 type User struct {
 	ID          string `gorm:"primaryKey"`
 	Username    string `gorm:"not null;index;uniqueIndex"`
@@ -35,6 +53,7 @@ type User struct {
 	Bio         *string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	Posts       []Post
 }
 
 type UserService interface {
