@@ -538,3 +538,46 @@ func TestUserService_ChangeFollow(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 }
+
+func TestUserService_Search(t *testing.T) {
+
+	users := make([]model.User, 0)
+
+	for i := 0; i < 5; i++ {
+		mockUser := fixture.GetMockUser()
+		users = append(users, *mockUser)
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+
+		term := "tes"
+
+		mockUserRepository.On("SearchProfiles", term).Return(&users, nil)
+
+		rsp, err := us.Search(term)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(*rsp))
+		mockUserRepository.AssertExpectations(t)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		mockUserRepository := new(mocks.UserRepository)
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+		})
+
+		term := "tes"
+		mockUserRepository.On("SearchProfiles", term).Return(nil, fmt.Errorf("some error down the call chain"))
+
+		rsp, err := us.Search(term)
+
+		assert.Nil(t, rsp)
+		assert.Error(t, err)
+		mockUserRepository.AssertExpectations(t)
+	})
+}

@@ -74,6 +74,126 @@ func (_m *PostService) FindPostByID(id string) (*model.Post, error) {
 	return r0, r1
 }
 
+// GetUserFeed provides a mock function with given fields: userId, cursor
+func (_m *PostService) GetUserFeed(userId string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(userId, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(userId, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(userId, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ProfileLikes provides a mock function with given fields: id, cursor
+func (_m *PostService) ProfileLikes(id string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(id, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(id, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(id, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ProfilePosts provides a mock function with given fields: id, cursor
+func (_m *PostService) ProfilePosts(id string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(id, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(id, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(id, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SearchPosts provides a mock function with given fields: tag, cursor
+func (_m *PostService) SearchPosts(tag string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(tag, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(tag, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(tag, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ToggleLike provides a mock function with given fields: post, uid
+func (_m *PostService) ToggleLike(post *model.Post, uid string) error {
+	ret := _m.Called(post, uid)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*model.Post, string) error); ok {
+		r0 = rf(post, uid)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ToggleRetweet provides a mock function with given fields: post, uid
+func (_m *PostService) ToggleRetweet(post *model.Post, uid string) error {
+	ret := _m.Called(post, uid)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*model.Post, string) error); ok {
+		r0 = rf(post, uid)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UploadFile provides a mock function with given fields: header
 func (_m *PostService) UploadFile(header *multipart.FileHeader) (*model.File, error) {
 	ret := _m.Called(header)

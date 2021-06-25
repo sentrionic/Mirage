@@ -92,12 +92,6 @@ func (r *userRepository) Update(user *model.User) error {
 	return result.Error
 }
 
-// isDuplicateKeyError checks if the provided error is a PostgreSQL duplicate key error
-func isDuplicateKeyError(err error) bool {
-	duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
-	return duplicate.MatchString(err.Error())
-}
-
 func (r *userRepository) AddFollow(userId, currentId string) error {
 	err := r.DB.Table("followers").Create(map[string]interface{}{
 		"user_id":     userId,
@@ -115,4 +109,22 @@ func (r *userRepository) RemoveFollow(userId, currentId string) error {
 		Exec("DELETE FROM followee WHERE followee_id = ? AND user_id = ?", userId, currentId).
 		Error
 	return err
+}
+
+func (r *userRepository) SearchProfiles(term string) (*[]model.User, error) {
+	users := &[]model.User{}
+
+	err := r.DB.
+		Preload("Followers").
+		Preload("Followee").
+		Where("username ILIKE ?", "%"+strings.ToLower(term)+"%").
+		Find(&users).Error
+
+	return users, err
+}
+
+// isDuplicateKeyError checks if the provided error is a PostgreSQL duplicate key error
+func isDuplicateKeyError(err error) bool {
+	duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
+	return duplicate.MatchString(err.Error())
 }

@@ -84,3 +84,35 @@ func (p *postService) UploadFile(header *multipart.FileHeader) (*model.File, err
 
 	return &file, nil
 }
+
+func (p *postService) ToggleLike(post *model.Post, uid string) error {
+	if post.IsLiked(uid) {
+		return p.PostRepository.RemoveLike(post, uid)
+	} else {
+		return p.PostRepository.AddLike(post, uid)
+	}
+}
+
+func (p *postService) ToggleRetweet(post *model.Post, uid string) error {
+	if post.IsRetweeted(uid) {
+		return p.PostRepository.RemoveRetweet(post, uid)
+	} else {
+		return p.PostRepository.AddRetweet(post, uid)
+	}
+}
+
+func (p *postService) GetUserFeed(userId, cursor string) (*[]model.Post, error) {
+	return p.PostRepository.Feed(userId, cursor)
+}
+
+func (p *postService) ProfilePosts(id, cursor string) (*[]model.Post, error) {
+	return p.PostRepository.List(id, cursor)
+}
+
+func (p *postService) ProfileLikes(id, cursor string) (*[]model.Post, error) {
+	return p.PostRepository.Likes(id, cursor)
+}
+
+func (p *postService) SearchPosts(tag, cursor string) (*[]model.Post, error) {
+	return p.PostRepository.GetPostsForHashtag(tag, cursor)
+}

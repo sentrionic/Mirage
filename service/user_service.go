@@ -103,3 +103,7 @@ func (s *userService) ChangeFollow(user *model.User, current string) error {
 		return s.UserRepository.AddFollow(user.ID, current)
 	}
 }
+
+func (s *userService) Search(term string) (*[]model.User, error) {
+	return s.UserRepository.SearchProfiles(term)
+}

@@ -7,6 +7,7 @@ import (
 	"github.com/sentrionic/mirage/handler/middleware"
 	"github.com/sentrionic/mirage/model"
 	"github.com/sentrionic/mirage/model/apperrors"
+	"net/http"
 	"time"
 )
 
@@ -31,6 +32,13 @@ func NewHandler(c *Config) {
 		MaxBodyBytes: c.MaxBodyBytes,
 	}
 
+	c.R.Use(middleware.ContextUser())
+	c.R.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "No route with for the given path found",
+		})
+	})
+
 	if gin.Mode() != gin.TestMode {
 		c.R.Use(middleware.Timeout(c.TimeoutDuration, apperrors.NewServiceUnavailable()))
 	}
@@ -50,16 +58,24 @@ func NewHandler(c *Config) {
 	// User group
 	ug := c.R.Group("v1/profiles")
 	ug.GET("/:username", h.GetProfile)
+	ug.GET("/:username/posts", h.GetProfilePosts)
+	ug.GET("/:username/likes", h.GetProfileLikes)
 
 	ug.Use(middleware.AuthUser())
+	ug.GET("", h.SearchProfiles)
 	ug.POST("/:username/follow", h.ToggleFollow)
 
 	// Post group
 	pg := c.R.Group("v1/posts")
+	pg.GET("/:id", h.GetPost)
 
 	pg.Use(middleware.AuthUser())
-
 	pg.POST("", h.CreatePost)
+	pg.GET("", h.SearchPosts)
+	pg.GET("/feed", h.Feed)
+	pg.POST("/:id/like", h.LikePost)
+	pg.DELETE("/:id", h.DeletePost)
+	pg.POST("/:id/retweet", h.Retweet)
 }
 
 // setUserSession saves the users ID in the session

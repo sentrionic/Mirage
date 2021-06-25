@@ -86,6 +86,7 @@ type UserService interface {
 	ChangeAvatar(header *multipart.FileHeader, directory string) (string, error)
 	DeleteImage(key string) error
 	ChangeFollow(user *User, current string) error
+	Search(term string) (*[]User, error)
 }
 
 type UserRepository interface {
@@ -96,4 +97,5 @@ type UserRepository interface {
 	Update(user *User) error
 	AddFollow(userId, currentId string) error
 	RemoveFollow(userId, currentId string) error
+	SearchProfiles(term string) (*[]User, error)
 }

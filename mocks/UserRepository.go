@@ -132,6 +132,29 @@ func (_m *UserRepository) RemoveFollow(userId string, currentId string) error {
 	return r0
 }
 
+// SearchProfiles provides a mock function with given fields: term
+func (_m *UserRepository) SearchProfiles(term string) (*[]model.User, error) {
+	ret := _m.Called(term)
+
+	var r0 *[]model.User
+	if rf, ok := ret.Get(0).(func(string) *[]model.User); ok {
+		r0 = rf(term)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(term)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: user
 func (_m *UserRepository) Update(user *model.User) error {
 	ret := _m.Called(user)
