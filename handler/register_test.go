@@ -29,6 +29,15 @@ func TestHandler_Register(t *testing.T) {
 		DisplayName: user.DisplayName,
 	}
 
+	user2 := fixture.GetMockUser()
+	user2.DisplayName = "Test User"
+	reqUser2 := &model.User{
+		Email:       user2.Email,
+		Password:    user2.Password,
+		Username:    user2.Username,
+		DisplayName: user2.DisplayName,
+	}
+
 	testCases := []struct {
 		name          string
 		body          gin.H
@@ -58,22 +67,20 @@ func TestHandler_Register(t *testing.T) {
 		{
 			name: "OK with non alphanumeric display name",
 			body: gin.H{
-				"username":    user.Username,
-				"password":    user.Password,
-				"displayName": "Test User",
-				"email":       user.Email,
+				"username":    user2.Username,
+				"password":    user2.Password,
+				"displayName": user2.DisplayName,
+				"email":       user2.Email,
 			},
 			buildStubs: func(mockUserService *mocks.UserService) {
-				user.DisplayName = "Test User"
-				reqUser.DisplayName = "Test User"
-				mockUserService.On("Register", reqUser).Return(user, nil)
+				mockUserService.On("Register", reqUser2).Return(user2, nil)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
 				assert.Equal(t, http.StatusCreated, recorder.Code)
-				respBody, err := json.Marshal(user.NewAccountResponse())
+				respBody, err := json.Marshal(user2.NewAccountResponse())
 				assert.NoError(t, err)
 				assert.Equal(t, recorder.Body.Bytes(), respBody)
-				mockUserService.AssertCalled(t, "Register", reqUser)
+				mockUserService.AssertCalled(t, "Register", reqUser2)
 				assert.Contains(t, recorder.Header(), "Set-Cookie")
 			},
 		},
@@ -86,10 +93,10 @@ func TestHandler_Register(t *testing.T) {
 				"email":       user.Email,
 			},
 			buildStubs: func(mockUserService *mocks.UserService) {
-				mockUserService.On("Register", reqUser).Return(apperrors.NewConflict("User Already Exists", reqUser.Email))
+				mockUserService.On("Register", reqUser).Return(nil, apperrors.NewConflict("User Already Exists", reqUser.Email))
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
-				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+				require.Equal(t, http.StatusConflict, recorder.Code)
 			},
 		},
 		{

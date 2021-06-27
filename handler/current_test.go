@@ -11,7 +11,6 @@ import (
 	"github.com/sentrionic/mirage/model/fixture"
 	"github.com/sentrionic/mirage/service"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -61,30 +60,7 @@ func TestHandler_Current(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 		assert.Equal(t, respBody, rr.Body.Bytes())
-		mockUserService.AssertExpectations(t) // assert that UserService.Get was called
-	})
-
-	t.Run("NoContextUser", func(t *testing.T) {
-		mockUserService := new(mocks.UserService)
-		mockUserService.On("Get", mock.Anything).Return(nil, nil)
-
-		// a response recorder for getting written http response
-		rr := httptest.NewRecorder()
-
-		// do not append user to context
-		router := gin.Default()
-		NewHandler(&Config{
-			R:           router,
-			UserService: mockUserService,
-		})
-
-		request, err := http.NewRequest(http.MethodGet, "/v1/accounts", nil)
-		assert.NoError(t, err)
-
-		router.ServeHTTP(rr, request)
-
-		assert.Equal(t, http.StatusInternalServerError, rr.Code)
-		mockUserService.AssertNotCalled(t, "Get", mock.Anything)
+		mockUserService.AssertExpectations(t)
 	})
 
 	t.Run("NotFound", func(t *testing.T) {
@@ -96,13 +72,11 @@ func TestHandler_Current(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		router := gin.Default()
-		router.Use(func(c *gin.Context) {
-			c.Set("userId", uid)
-		})
 		store := cookie.NewStore([]byte("secret"))
 		router.Use(sessions.Sessions("mqk", store))
 
 		router.Use(func(c *gin.Context) {
+			c.Set("userId", uid)
 			session := sessions.Default(c)
 			session.Set("userId", uid)
 		})
