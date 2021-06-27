@@ -18,3 +18,6 @@ start:
 
 test:
 	go test -v -cover ./...
+
+e2e:
+	go test -run "^\QTestMain_E2E\E$"

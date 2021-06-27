@@ -29,11 +29,9 @@ func AuthUser() gin.HandlerFunc {
 		c.Set("userId", userId)
 
 		// Recreate session to extend its lifetime
-		session.Set("userId", id)
 		if err := session.Save(); err != nil {
 			fmt.Println(err)
 		}
-
 		c.Next()
 	}
 }

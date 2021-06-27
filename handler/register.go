@@ -27,7 +27,7 @@ func (r registerReq) Validate() error {
 	)
 }
 
-func (r registerReq) Sanitize() {
+func (r *registerReq) Sanitize() {
 	r.Username = strings.TrimSpace(r.Username)
 	r.DisplayName = strings.TrimSpace(r.DisplayName)
 	r.Email = strings.TrimSpace(r.Email)

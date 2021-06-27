@@ -23,5 +23,4 @@ func (h *Handler) Logout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, true)
-	return
 }

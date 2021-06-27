@@ -29,7 +29,7 @@ func TestHandler_Retweet(t *testing.T) {
 		mockPostService.On("FindPostByID", mockPost.ID).Return(mockPost, nil)
 		mockPostService.On("ToggleRetweet", mockPost, current.ID).
 			Run(func(args mock.Arguments) {
-				mockPost.Retweets = append(mockPost.Retweets, model.Retweet{PostId: mockPost.ID, UserID: current.ID})
+				mockPost.Retweets = append(mockPost.Retweets, *current)
 			}).
 			Return(nil)
 
@@ -74,14 +74,14 @@ func TestHandler_Retweet(t *testing.T) {
 
 	t.Run("Successful retweet removal", func(t *testing.T) {
 		mockPost := fixture.GetMockPost()
-		mockPost.Retweets = append(mockPost.Retweets, model.Retweet{PostId: mockPost.ID, UserID: current.ID})
+		mockPost.Retweets = append(mockPost.Retweets, *current)
 		assert.Equal(t, true, mockPost.IsRetweeted(current.ID))
 
 		mockPostService := new(mocks.PostService)
 		mockPostService.On("FindPostByID", mockPost.ID).Return(mockPost, nil)
 		mockPostService.On("ToggleRetweet", mockPost, current.ID).
 			Run(func(args mock.Arguments) {
-				mockPost.Retweets = append(mockPost.Retweets[1:])
+				mockPost.Retweets = mockPost.Retweets[1:]
 			}).
 			Return(nil)
 

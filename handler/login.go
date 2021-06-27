@@ -22,7 +22,7 @@ func (r loginReq) Validate() error {
 	)
 }
 
-func (r loginReq) Sanitize() {
+func (r *loginReq) Sanitize() {
 	r.Email = strings.TrimSpace(r.Email)
 	r.Email = strings.ToLower(r.Email)
 	r.Password = strings.TrimSpace(r.Password)

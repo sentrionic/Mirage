@@ -31,6 +31,7 @@ func (r *postRepository) FindByID(id string) (*model.Post, error) {
 	if err := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
+		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Where("id = ?", id).
@@ -75,7 +76,7 @@ func (r *postRepository) RemoveLike(post *model.Post, uid string) error {
 }
 
 func (r *postRepository) AddRetweet(post *model.Post, uid string) error {
-	err := r.DB.Table("post_retweets").
+	err := r.DB.Table("retweets").
 		Create(map[string]interface{}{
 			"user_id": uid,
 			"post_id": post.ID,
@@ -85,7 +86,7 @@ func (r *postRepository) AddRetweet(post *model.Post, uid string) error {
 
 func (r *postRepository) RemoveRetweet(post *model.Post, uid string) error {
 	err := r.DB.
-		Exec("DELETE FROM post_retweets WHERE user_id = ? AND post_id = ?", uid, post.ID).
+		Exec("DELETE FROM retweets WHERE user_id = ? AND post_id = ?", uid, post.ID).
 		Error
 	return err
 }
@@ -96,13 +97,14 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 	query := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
+		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Joins("LEFT JOIN users u ON u.id = \"posts\".user_id").
 		Joins("LEFT JOIN followee on u.id = followee.followee_id").
-		Joins("LEFT JOIN post_retweets pr on \"posts\".id = pr.post_id").
+		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
 		Where("followee.user_id = ?", userId).
-		Or("pr.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = ?)", userId)
+		Or("r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = ?)", userId)
 
 	if cursor != "" {
 		cursor = cursor[:len(cursor)-6]
@@ -124,11 +126,12 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 	query := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
+		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Joins("LEFT JOIN users u ON u.id = \"posts\".user_id").
-		Joins("LEFT JOIN post_retweets pr on \"posts\".id = pr.post_id").
-		Where("u.id = @id OR pr.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id)", sql.Named("id", id))
+		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
+		Where("u.id = @id OR r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id)", sql.Named("id", id))
 
 	if cursor != "" {
 		cursor = cursor[:len(cursor)-6]
@@ -150,6 +153,7 @@ func (r *postRepository) Likes(id, cursor string) (*[]model.Post, error) {
 	query := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
+		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Joins("LEFT JOIN post_likes pl on \"posts\".id = pl.post_id").
@@ -179,6 +183,7 @@ func (r *postRepository) GetPostsForHashtag(term, cursor string) (*[]model.Post,
 	query := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
+		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Joins("LEFT JOIN users u ON u.id = \"posts\".user_id").

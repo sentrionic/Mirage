@@ -5,7 +5,6 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/sentrionic/mirage/model"
 	"github.com/sentrionic/mirage/model/apperrors"
 	"log"
 	"mime/multipart"
@@ -32,7 +31,7 @@ func (r editAccountReq) Validate() error {
 	)
 }
 
-func (r editAccountReq) Sanitize() {
+func (r *editAccountReq) Sanitize() {
 	r.Username = strings.TrimSpace(r.Username)
 	r.DisplayName = strings.TrimSpace(r.DisplayName)
 	r.Email = strings.TrimSpace(r.Email)
@@ -66,13 +65,10 @@ func (h *Handler) EditAccount(c *gin.Context) {
 		return
 	}
 
-	user := &model.User{
-		ID:          authUser.ID,
-		Username:    req.Username,
-		DisplayName: req.DisplayName,
-		Email:       req.Email,
-		Bio:         req.Bio,
-	}
+	authUser.Username = req.Username
+	authUser.Email = req.Email
+	authUser.DisplayName = req.DisplayName
+	authUser.Bio = req.Bio
 
 	if req.Image != nil {
 
@@ -102,7 +98,7 @@ func (h *Handler) EditAccount(c *gin.Context) {
 		authUser.Image = url
 	}
 
-	err = h.UserService.Update(user)
+	err = h.UserService.Update(authUser)
 
 	if err != nil {
 		log.Printf("Failed to update user: %v\n", err)
@@ -113,5 +109,5 @@ func (h *Handler) EditAccount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user.NewAccountResponse())
+	c.JSON(http.StatusOK, authUser.NewAccountResponse())
 }

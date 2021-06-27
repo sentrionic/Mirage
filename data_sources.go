@@ -37,8 +37,13 @@ func initDS() (*dataSources, error) {
 		&model.User{},
 		&model.Post{},
 		&model.File{},
+		&model.Retweet{},
 	); err != nil {
 		return nil, fmt.Errorf("error migrating models: %w", err)
+	}
+
+	if err := db.SetupJoinTable(&model.Post{}, "Retweets", &model.Retweet{}); err != nil {
+		return nil, fmt.Errorf("error creating join table: %w", err)
 	}
 
 	// Initialize redis connection

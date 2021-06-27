@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/lucsky/cuid"
 	"github.com/sentrionic/mirage/model"
 	"github.com/sentrionic/mirage/model/apperrors"
@@ -52,6 +51,13 @@ func (p *postService) CreatePost(post *model.Post) (*model.Post, error) {
 }
 
 func (p *postService) DeletePost(post *model.Post) error {
+	if post.File != nil {
+		err := p.FileRepository.DeleteImage(post.File.Filename)
+		if err != nil {
+			return err
+		}
+	}
+
 	return p.PostRepository.Delete(post)
 }
 
@@ -73,7 +79,7 @@ func (p *postService) UploadFile(header *multipart.FileHeader) (*model.File, err
 
 	file.ID = id
 
-	directory := fmt.Sprintf("media/")
+	directory := "media/"
 	url, err := p.FileRepository.UploadFile(header, directory, filename, mimetype)
 
 	if err != nil {

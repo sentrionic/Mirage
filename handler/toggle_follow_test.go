@@ -82,7 +82,7 @@ func TestHandler_ToggleFollow(t *testing.T) {
 		mockUserService.On("FindByUsername", mockUser.Username).Return(mockUser, nil)
 		mockUserService.On("ChangeFollow", mockUser, current.ID).
 			Run(func(args mock.Arguments) {
-				mockUser.Followers = append(mockUser.Followers[1:])
+				mockUser.Followers = mockUser.Followers[1:]
 			}).
 			Return(nil)
 

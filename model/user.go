@@ -11,7 +11,7 @@ type AccountResponse struct {
 	Username    string  `json:"username"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image"`
-	Bio         *string `json:"about"`
+	Bio         *string `json:"bio"`
 }
 
 func (user *User) NewAccountResponse() AccountResponse {

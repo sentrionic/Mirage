@@ -81,7 +81,7 @@ func TestHandler_LikePost(t *testing.T) {
 		mockPostService.On("FindPostByID", mockPost.ID).Return(mockPost, nil)
 		mockPostService.On("ToggleLike", mockPost, current.ID).
 			Run(func(args mock.Arguments) {
-				mockPost.Likes = append(mockPost.Likes[1:])
+				mockPost.Likes = mockPost.Likes[1:]
 			}).
 			Return(nil)
 

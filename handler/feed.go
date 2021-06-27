@@ -35,7 +35,6 @@ func (h *Handler) Feed(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"posts":   response,
-		"hasMore": len(*posts) == model.LIMIT + 1,
+		"hasMore": len(*posts) == model.LIMIT+1,
 	})
-	return
 }

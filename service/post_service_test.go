@@ -341,7 +341,7 @@ func TestPostService_ToggleRetweet(t *testing.T) {
 	t.Run("Successfully removed retweet", func(t *testing.T) {
 		mockUser := fixture.GetMockUser()
 		mockPost := fixture.GetMockPost()
-		mockPost.Retweets = append(mockPost.Retweets, model.Retweet{PostId: mockPost.ID, UserID: mockUser.ID})
+		mockPost.Retweets = append(mockPost.Retweets, *mockUser)
 
 		mockPostRepository := new(mocks.PostRepository)
 		ps := NewPostService(&PSConfig{
@@ -359,7 +359,7 @@ func TestPostService_ToggleRetweet(t *testing.T) {
 	t.Run("Error from RemoveRetweet", func(t *testing.T) {
 		mockUser := fixture.GetMockUser()
 		mockPost := fixture.GetMockPost()
-		mockPost.Retweets = append(mockPost.Retweets, model.Retweet{PostId: mockPost.ID, UserID: mockUser.ID})
+		mockPost.Retweets = append(mockPost.Retweets, *mockUser)
 
 		mockPostRepository := new(mocks.PostRepository)
 		ps := NewPostService(&PSConfig{

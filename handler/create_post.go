@@ -27,7 +27,7 @@ func (r createPostReq) Validate() error {
 	)
 }
 
-func (r createPostReq) Sanitize() {
+func (r *createPostReq) Sanitize() {
 	if r.Text != nil {
 		text := strings.TrimSpace(*r.Text)
 		r.Text = &text

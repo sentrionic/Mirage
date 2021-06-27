@@ -64,7 +64,7 @@ func (post *Post) IsRetweeted(id string) bool {
 	}
 
 	for _, v := range post.Retweets {
-		if v.UserID == id {
+		if v.ID == id {
 			return true
 		}
 	}
@@ -79,7 +79,7 @@ type Post struct {
 	UserID    string         `gorm:"not null;constraint:OnDelete:CASCADE;"`
 	User      User           `gorm:"not null;constraint:OnDelete:CASCADE;"`
 	Likes     []User         `gorm:"many2many:post_likes;constraint:OnDelete:CASCADE;"`
-	Retweets  []Retweet      `gorm:"many2many:post_retweets;constraint:OnDelete:CASCADE;"`
+	Retweets  []User         `gorm:"many2many:retweets;constraint:OnDelete:CASCADE;"`
 	CreatedAt time.Time      `gorm:"index"`
 	UpdatedAt time.Time
 }

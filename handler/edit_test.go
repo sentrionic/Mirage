@@ -30,33 +30,16 @@ func TestHandler_EditAccount(t *testing.T) {
 	mockUser := fixture.GetMockUser()
 	mockUser.ID = uid
 
-	router := gin.Default()
-	router.Use(func(c *gin.Context) {
-		c.Set("userId", uid)
-	})
-	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("mqk", store))
-
-	router.Use(func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Set("userId", uid)
-	})
-
-	mockUserService := new(mocks.UserService)
-	mockUserService.On("Get", uid).Return(mockUser, nil)
-
-	NewHandler(&Config{
-		R:            router,
-		UserService:  mockUserService,
-		MaxBodyBytes: 4 * 1024 * 1024,
-	})
-
 	t.Run("Unauthorized", func(t *testing.T) {
 		router := gin.Default()
 		store := cookie.NewStore([]byte("secret"))
 		router.Use(sessions.Sessions("mqk", store))
+		mockUserService := new(mocks.UserService)
+		mockUserService.On("Get", uid).Return(mockUser, nil)
+
 		NewHandler(&Config{
-			R: router,
+			R:           router,
+			UserService: mockUserService,
 		})
 
 		rr := httptest.NewRecorder()
@@ -80,6 +63,25 @@ func TestHandler_EditAccount(t *testing.T) {
 	})
 
 	t.Run("Update success", func(t *testing.T) {
+		router := gin.Default()
+		store := cookie.NewStore([]byte("secret"))
+		router.Use(sessions.Sessions("mqk", store))
+
+		router.Use(func(c *gin.Context) {
+			c.Set("userId", uid)
+			session := sessions.Default(c)
+			session.Set("userId", uid)
+		})
+
+		mockUserService := new(mocks.UserService)
+		mockUserService.On("Get", uid).Return(mockUser, nil)
+
+		NewHandler(&Config{
+			R:            router,
+			UserService:  mockUserService,
+			MaxBodyBytes: 4 * 1024 * 1024,
+		})
+
 		rr := httptest.NewRecorder()
 
 		newName := fixture.Username()
@@ -99,16 +101,13 @@ func TestHandler_EditAccount(t *testing.T) {
 		request, _ := http.NewRequest(http.MethodPut, "/v1/accounts", body)
 		request.Header.Set("Content-Type", writer.FormDataContentType())
 
-		userToUpdate := &model.User{
-			ID:          mockUser.ID,
-			Username:    newName,
-			Email:       newEmail,
-			Bio:         &newBio,
-			DisplayName: newDisplayName,
-		}
+		mockUser.Username = newName
+		mockUser.Email = newEmail
+		mockUser.Bio = &newBio
+		mockUser.DisplayName = newDisplayName
 
 		updateArgs := mock.Arguments{
-			userToUpdate,
+			mockUser,
 		}
 
 		dbImageURL := "https://website.com/696292a38f493a4283d1a308e4a11732/84d81/Profile.jpg"
@@ -123,46 +122,51 @@ func TestHandler_EditAccount(t *testing.T) {
 
 		router.ServeHTTP(rr, request)
 
-		userToUpdate.Image = dbImageURL
-		respBody, _ := json.Marshal(userToUpdate.NewAccountResponse())
+		mockUser.Image = dbImageURL
+		respBody, _ := json.Marshal(mockUser.NewAccountResponse())
 
 		assert.Equal(t, http.StatusOK, rr.Code)
 		assert.Equal(t, respBody, rr.Body.Bytes())
 		mockUserService.AssertCalled(t, "Update", updateArgs...)
 	})
 
-	t.Run("Update failure", func(t *testing.T) {
+	t.Run("Update Failure", func(t *testing.T) {
+		router := gin.Default()
+		store := cookie.NewStore([]byte("secret"))
+		router.Use(sessions.Sessions("mqk", store))
+
+		router.Use(func(c *gin.Context) {
+			c.Set("userId", uid)
+			session := sessions.Default(c)
+			session.Set("userId", uid)
+		})
+
+		mockUserService := new(mocks.UserService)
+		mockUserService.On("Get", uid).Return(mockUser, nil)
+
+		NewHandler(&Config{
+			R:            router,
+			UserService:  mockUserService,
+			MaxBodyBytes: 4 * 1024 * 1024,
+		})
+
 		rr := httptest.NewRecorder()
 
-		newName := fixture.Username()
-		newEmail := fixture.Email()
-		newBio := fixture.RandStringRunes(100)
-		newDisplayName := fixture.DisplayName()
+		bio := fixture.RandStringRunes(121)
 
 		form := url.Values{}
-		form.Add("username", newName)
-		form.Add("email", newEmail)
-		form.Add("bio", newBio)
-		form.Add("displayName", newDisplayName)
+		form.Add("username", mockUser.Username)
+		form.Add("displayName", mockUser.DisplayName)
+		form.Add("email", mockUser.Email)
+		form.Add("bio", bio)
 
 		request, _ := http.NewRequest(http.MethodPut, "/v1/accounts", strings.NewReader(form.Encode()))
 		request.Form = form
-		userToUpdate := &model.User{
-			ID:          mockUser.ID,
-			Username:    newName,
-			Email:       newEmail,
-			Bio:         &newBio,
-			DisplayName: newDisplayName,
-		}
-
-		updateArgs := mock.Arguments{
-			userToUpdate,
-		}
 
 		mockError := apperrors.NewInternal()
 
 		mockUserService.
-			On("Update", updateArgs...).
+			On("Update", mockUser).
 			Return(mockError)
 
 		router.ServeHTTP(rr, request)
@@ -173,10 +177,29 @@ func TestHandler_EditAccount(t *testing.T) {
 
 		assert.Equal(t, mockError.Status(), rr.Code)
 		assert.Equal(t, respBody, rr.Body.Bytes())
-		mockUserService.AssertCalled(t, "Update", updateArgs...)
+		mockUserService.AssertCalled(t, "Update", mockUser)
 	})
 
 	t.Run("Disallowed mimetype", func(t *testing.T) {
+		router := gin.Default()
+		store := cookie.NewStore([]byte("secret"))
+		router.Use(sessions.Sessions("mqk", store))
+
+		router.Use(func(c *gin.Context) {
+			c.Set("userId", uid)
+			session := sessions.Default(c)
+			session.Set("userId", uid)
+		})
+
+		mockUserService := new(mocks.UserService)
+		mockUserService.On("Get", uid).Return(mockUser, nil)
+
+		NewHandler(&Config{
+			R:            router,
+			UserService:  mockUserService,
+			MaxBodyBytes: 4 * 1024 * 1024,
+		})
+
 		rr := httptest.NewRecorder()
 
 		multipartImageFixture := fixture.NewMultipartImage("image.txt", "mage/svg+xml")

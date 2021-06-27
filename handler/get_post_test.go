@@ -243,7 +243,7 @@ func TestHandler_GetPost(t *testing.T) {
 		mockPost := fixture.GetMockPost()
 		current := fixture.GetMockUser()
 		current.ID = uid
-		mockPost.Retweets = append(mockPost.Retweets, model.Retweet{PostId: mockPost.ID, UserID: uid})
+		mockPost.Retweets = append(mockPost.Retweets, *current)
 
 		mockPostService := new(mocks.PostService)
 		mockPostService.On("FindPostByID", mockPost.ID).Return(mockPost, nil)
