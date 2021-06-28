@@ -17,7 +17,7 @@ start:
 	docker start postgres12 && docker start redis
 
 test:
-	go test -v -cover ./...
+	go test -v -cover ./service/... ./handler/...
 
 e2e:
-	go test -run "^\QTestMain_E2E\E$"
+	go test -run '^\QTestMain_E2E\E$\'

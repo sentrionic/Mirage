@@ -25,10 +25,7 @@ type PostListResponse struct {
 func TestMain_E2E(t *testing.T) {
 	gin.SetMode(gin.ReleaseMode)
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
 
 	ds, err := initDS()
 
@@ -307,19 +304,74 @@ func TestMain_E2E(t *testing.T) {
 				profilePost.UserID = mockProfile.ID
 			},
 		},
+		//{
+		//	name: "Create File Post",
+		//	setupRequest: func() (*http.Request, error) {
+		//		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		//		defer multipartImageFixture.Close()
+		//
+		//		request, err := http.NewRequest(http.MethodPost, "/v1/posts", multipartImageFixture.MultipartBody)
+		//
+		//		if err != nil {
+		//			return nil, err
+		//		}
+		//
+		//		request.Header.Set("Content-Type", multipartImageFixture.ContentType)
+		//
+		//		return request, nil
+		//	},
+		//	setupHeaders: func(t *testing.T, request *http.Request) {
+		//		request.Header.Add("Cookie", cookie)
+		//	},
+		//	checkResponse: func(recorder *httptest.ResponseRecorder) {
+		//		assert.Equal(t, http.StatusCreated, recorder.Code)
+		//		assert.NoError(t, err)
+		//
+		//		respBody := &model.PostResponse{}
+		//		err = json.Unmarshal(recorder.Body.Bytes(), respBody)
+		//		assert.NoError(t, err)
+		//
+		//		assert.Nil(t, respBody.Text)
+		//		assert.Equal(t, uint(0), respBody.Likes)
+		//		assert.Equal(t, uint(0), respBody.Retweets)
+		//		assert.Equal(t, false, respBody.Liked)
+		//		assert.Equal(t, false, respBody.Retweeted)
+		//		assert.NotNil(t, respBody.ID)
+		//		assert.NotNil(t, respBody.Author)
+		//		assert.NotNil(t, respBody.File)
+		//
+		//		author := respBody.Author
+		//
+		//		assert.Equal(t, mockUser.Username, author.Username)
+		//		assert.Equal(t, mockUser.DisplayName, author.DisplayName)
+		//		assert.Equal(t, mockUser.Image, author.Image)
+		//		assert.Equal(t, uint(0), author.Followers)
+		//		assert.Equal(t, uint(0), author.Followee)
+		//		assert.Equal(t, false, author.Following)
+		//		assert.Equal(t, *mockUser.Bio, *author.Bio)
+		//
+		//		file := respBody.File
+		//		assert.NotNil(t, file.Url)
+		//		assert.NotNil(t, file.Filename)
+		//		assert.NotNil(t, file.FileType)
+		//
+		//		userPost.ID = respBody.ID
+		//		userPost.UserID = author.ID
+		//	},
+		//},
 		{
-			name: "Create File Post",
+			name: "Create User Post",
 			setupRequest: func() (*http.Request, error) {
-				multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
-				defer multipartImageFixture.Close()
+				form := url.Values{}
+				form.Add("text", *userPost.Text)
 
-				request, err := http.NewRequest(http.MethodPost, "/v1/posts", multipartImageFixture.MultipartBody)
+				request, err := http.NewRequest(http.MethodPost, "/v1/posts", strings.NewReader(form.Encode()))
 
 				if err != nil {
 					return nil, err
 				}
 
-				request.Header.Set("Content-Type", multipartImageFixture.ContentType)
+				request.Form = form
 
 				return request, nil
 			},
@@ -334,14 +386,14 @@ func TestMain_E2E(t *testing.T) {
 				err = json.Unmarshal(recorder.Body.Bytes(), respBody)
 				assert.NoError(t, err)
 
-				assert.Nil(t, respBody.Text)
+				assert.Equal(t, userPost.Text, respBody.Text)
 				assert.Equal(t, uint(0), respBody.Likes)
 				assert.Equal(t, uint(0), respBody.Retweets)
 				assert.Equal(t, false, respBody.Liked)
 				assert.Equal(t, false, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
 				assert.NotNil(t, respBody.Author)
-				assert.NotNil(t, respBody.File)
+				assert.Nil(t, respBody.File)
 
 				author := respBody.Author
 
@@ -352,11 +404,6 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, uint(0), author.Followee)
 				assert.Equal(t, false, author.Following)
 				assert.Equal(t, *mockUser.Bio, *author.Bio)
-
-				file := respBody.File
-				assert.NotNil(t, file.Url)
-				assert.NotNil(t, file.Filename)
-				assert.NotNil(t, file.FileType)
 
 				userPost.ID = respBody.ID
 				userPost.UserID = author.ID
@@ -380,14 +427,14 @@ func TestMain_E2E(t *testing.T) {
 				err = json.Unmarshal(recorder.Body.Bytes(), respBody)
 				assert.NoError(t, err)
 
-				assert.Nil(t, respBody.Text)
+				assert.NotNil(t, respBody.Text)
 				assert.Equal(t, uint(1), respBody.Likes)
 				assert.Equal(t, uint(0), respBody.Retweets)
 				assert.Equal(t, true, respBody.Liked)
 				assert.Equal(t, false, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
 				assert.NotNil(t, respBody.Author)
-				assert.NotNil(t, respBody.File)
+				assert.Nil(t, respBody.File)
 
 				author := respBody.Author
 
@@ -397,11 +444,6 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, uint(0), author.Followers)
 				assert.Equal(t, uint(0), author.Followee)
 				assert.Equal(t, false, author.Following)
-
-				file := respBody.File
-				assert.NotNil(t, file.Url)
-				assert.NotNil(t, file.Filename)
-				assert.NotNil(t, file.FileType)
 			},
 		},
 		{
@@ -471,14 +513,14 @@ func TestMain_E2E(t *testing.T) {
 
 				post := respBody.Posts[0]
 
-				assert.Nil(t, post.Text)
+				assert.NotNil(t, post.Text)
 				assert.Equal(t, uint(1), post.Likes)
 				assert.Equal(t, uint(0), post.Retweets)
 				assert.Equal(t, false, post.Liked)
 				assert.Equal(t, false, post.Retweeted)
 				assert.NotNil(t, post.ID)
 				assert.NotNil(t, post.Author)
-				assert.NotNil(t, post.File)
+				assert.Nil(t, post.File)
 
 				author := post.Author
 
