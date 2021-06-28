@@ -12,6 +12,5 @@ func GetMockPost() *model.Post {
 		Text:      &text,
 		UserID:    RandID(),
 		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
 	}
 }

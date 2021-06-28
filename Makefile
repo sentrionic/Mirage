@@ -21,3 +21,6 @@ test:
 
 e2e:
 	go test -run '^\QTestMain_E2E\E$\'
+
+lint:
+	golangci-lint run

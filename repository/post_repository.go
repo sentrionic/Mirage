@@ -100,10 +100,9 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
-		Joins("LEFT JOIN users u ON u.id = \"posts\".user_id").
-		Joins("LEFT JOIN followee on u.id = followee.followee_id").
+		Joins("LEFT JOIN followers on \"posts\".user_id = followers.user_id").
 		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
-		Where("followee.user_id = ?", userId).
+		Where("followers.follower_id = ?", userId).
 		Or("r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = ?)", userId)
 
 	if cursor != "" {
@@ -113,7 +112,7 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 	}
 
 	query.
-		Order("created_at DESC").
+		Order("created_at, r.created_at DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 
@@ -124,14 +123,14 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 	var posts []model.Post
 
 	query := r.DB.
+		Debug().
 		Preload("Likes").
 		Preload("Retweets").
 		Preload("File").
 		Preload("User.Followers").
 		Preload("User.Followers").
-		Joins("LEFT JOIN users u ON u.id = \"posts\".user_id").
 		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
-		Where("u.id = @id OR r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id)", sql.Named("id", id))
+		Where("\"posts\".user_id = @id OR r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id)", sql.Named("id", id))
 
 	if cursor != "" {
 		cursor = cursor[:len(cursor)-6]
@@ -140,7 +139,7 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 	}
 
 	query.
-		Order("created_at DESC").
+		Order("created_at, r.created_At DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 

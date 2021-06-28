@@ -81,7 +81,6 @@ type Post struct {
 	Likes     []User         `gorm:"many2many:post_likes;constraint:OnDelete:CASCADE;"`
 	Retweets  []User         `gorm:"many2many:retweets;constraint:OnDelete:CASCADE;"`
 	CreatedAt time.Time      `gorm:"index"`
-	UpdatedAt time.Time
 }
 
 type PostService interface {
