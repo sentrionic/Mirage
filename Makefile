@@ -24,3 +24,6 @@ e2e:
 
 lint:
 	golangci-lint run
+
+build:
+	go build github.com/sentrionic/mirage

@@ -581,3 +581,205 @@ func TestUserService_Search(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 }
+
+func TestUserService_ChangeBanner(t *testing.T) {
+	mockUserRepository := new(mocks.UserRepository)
+	mockFileRepository := new(mocks.FileRepository)
+
+	us := NewUserService(&USConfig{
+		UserRepository: mockUserRepository,
+		FileRepository: mockFileRepository,
+	})
+
+	t.Run("Successful new banner", func(t *testing.T) {
+		// does not have have banner
+		mockUser := fixture.GetMockUser()
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		directory := "test_dir"
+
+		uploadFileArgs := mock.Arguments{
+			imageFileHeader,
+			directory,
+		}
+
+		imageURL := "https://imageurl.com/jdfkj34kljl"
+
+		mockFileRepository.
+			On("UploadBanner", uploadFileArgs...).
+			Return(imageURL, nil)
+
+		updateArgs := mock.Arguments{
+			mockUser,
+		}
+
+		mockUpdatedUser := &model.User{
+			ID:          mockUser.ID,
+			Email:       mockUser.Email,
+			Bio:         mockUser.Bio,
+			Username:    mockUser.Username,
+			DisplayName: mockUser.DisplayName,
+			Image:       mockUser.Image,
+			Banner:      &imageURL,
+			Password:    mockUser.Password,
+			CreatedAt:   mockUser.CreatedAt,
+			UpdatedAt:   mockUser.UpdatedAt,
+		}
+
+		mockUserRepository.
+			On("Update", updateArgs...).
+			Return(nil)
+
+		url, err := us.ChangeBanner(imageFileHeader, directory)
+		assert.NoError(t, err)
+		mockUser.Banner = &url
+
+		err = us.Update(mockUser)
+
+		assert.NoError(t, err)
+		assert.Equal(t, mockUpdatedUser, mockUser)
+		mockFileRepository.AssertCalled(t, "UploadBanner", uploadFileArgs...)
+		mockUserRepository.AssertCalled(t, "Update", updateArgs...)
+	})
+
+	t.Run("Successful update banner", func(t *testing.T) {
+		imageURL := "https://imageurl.com/jdfkj34kljl"
+
+		mockUser := fixture.GetMockUser()
+		mockUser.Banner = &imageURL
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		directory := "test_dir"
+
+		uploadFileArgs := mock.Arguments{
+			imageFileHeader,
+			directory,
+		}
+
+		deleteImageArgs := mock.Arguments{
+			imageURL,
+		}
+
+		mockFileRepository.
+			On("UploadBanner", uploadFileArgs...).
+			Return(imageURL, nil)
+
+		mockFileRepository.
+			On("DeleteImage", deleteImageArgs...).
+			Return(nil)
+
+		mockUpdatedUser := &model.User{
+			ID:          mockUser.ID,
+			Email:       mockUser.Email,
+			Bio:         mockUser.Bio,
+			Username:    mockUser.Username,
+			DisplayName: mockUser.DisplayName,
+			Image:       mockUser.Image,
+			Banner:      &imageURL,
+			Password:    mockUser.Password,
+			CreatedAt:   mockUser.CreatedAt,
+			UpdatedAt:   mockUser.UpdatedAt,
+		}
+
+		updateArgs := mock.Arguments{
+			mockUser,
+		}
+
+		mockUserRepository.
+			On("Update", updateArgs...).
+			Return(nil)
+
+		url, err := us.ChangeBanner(imageFileHeader, directory)
+		assert.NoError(t, err)
+		err = us.DeleteImage(*mockUser.Banner)
+		assert.NoError(t, err)
+
+		mockUser.Banner = &url
+		err = us.Update(mockUser)
+		assert.NoError(t, err)
+
+		assert.Equal(t, mockUpdatedUser, mockUser)
+		mockFileRepository.AssertCalled(t, "UploadBanner", uploadFileArgs...)
+		mockFileRepository.AssertCalled(t, "DeleteImage", imageURL)
+		mockUserRepository.AssertCalled(t, "Update", updateArgs...)
+	})
+
+	t.Run("FileRepository Error", func(t *testing.T) {
+		// need to create a new UserService and repository
+		// because testify has no way to overwrite a mock's
+		// "On" call.
+		mockUserRepository := new(mocks.UserRepository)
+		mockFileRepository := new(mocks.FileRepository)
+
+		us := NewUserService(&USConfig{
+			UserRepository: mockUserRepository,
+			FileRepository: mockFileRepository,
+		})
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		directory := "file_directory"
+
+		uploadFileArgs := mock.Arguments{
+			imageFileHeader,
+			directory,
+		}
+
+		mockError := apperrors.NewInternal()
+		mockFileRepository.
+			On("UploadBanner", uploadFileArgs...).
+			Return("", mockError)
+
+		url, err := us.ChangeBanner(imageFileHeader, directory)
+		assert.Equal(t, "", url)
+		assert.Error(t, err)
+
+		mockFileRepository.AssertCalled(t, "UploadBanner", uploadFileArgs...)
+		mockUserRepository.AssertNotCalled(t, "Update")
+	})
+
+	t.Run("UserRepository Update Error", func(t *testing.T) {
+		imageURL := "https://imageurl.com/jdfkj34kljl"
+
+		mockUser := fixture.GetMockUser()
+		mockUser.Banner = &imageURL
+
+		multipartImageFixture := fixture.NewMultipartImage("image.png", "image/png")
+		defer multipartImageFixture.Close()
+		imageFileHeader := multipartImageFixture.GetFormFile()
+		directory := "file_dir"
+
+		uploadFileArgs := mock.Arguments{
+			imageFileHeader,
+			directory,
+		}
+
+		mockFileRepository.
+			On("UploadBanner", uploadFileArgs...).
+			Return(imageURL, nil)
+
+		updateArgs := mock.Arguments{
+			mockUser,
+		}
+
+		mockError := apperrors.NewInternal()
+		mockUserRepository.
+			On("Update", updateArgs...).
+			Return(mockError)
+
+		url, err := us.ChangeBanner(imageFileHeader, directory)
+		assert.NoError(t, err)
+		assert.Equal(t, imageURL, url)
+
+		err = us.Update(mockUser)
+
+		assert.Error(t, err)
+		mockFileRepository.AssertCalled(t, "UploadBanner", uploadFileArgs...)
+		mockUserRepository.AssertCalled(t, "Update", updateArgs...)
+	})
+}

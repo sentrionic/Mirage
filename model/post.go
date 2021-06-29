@@ -7,15 +7,16 @@ import (
 )
 
 type PostResponse struct {
-	ID        string  `json:"id"`
-	Text      *string `json:"text"`
-	Likes     uint    `json:"likes"`
-	Liked     bool    `json:"liked"`
-	Retweets  uint    `json:"retweets"`
-	Retweeted bool    `json:"retweeted"`
-	IsRetweet bool    `json:"isRetweet"`
-	File      *File   `json:"file"`
-	Author    Profile `json:"author"`
+	ID        string    `json:"id"`
+	Text      *string   `json:"text"`
+	Likes     uint      `json:"likes"`
+	Liked     bool      `json:"liked"`
+	Retweets  uint      `json:"retweets"`
+	Retweeted bool      `json:"retweeted"`
+	IsRetweet bool      `json:"isRetweet"`
+	File      *File     `json:"file"`
+	Author    Profile   `json:"author"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 func (post *Post) NewPostResponse(id string) PostResponse {
@@ -28,6 +29,7 @@ func (post *Post) NewPostResponse(id string) PostResponse {
 		Retweeted: post.IsRetweeted(id),
 		File:      post.File,
 		Author:    post.User.NewProfileResponse(id),
+		CreatedAt: post.CreatedAt,
 	}
 }
 
@@ -42,6 +44,7 @@ func (post *Post) NewFeedResponse(id string) PostResponse {
 		IsRetweet: !post.User.IsFollowing(id),
 		File:      post.File,
 		Author:    post.User.NewProfileResponse(id),
+		CreatedAt: post.CreatedAt,
 	}
 }
 

@@ -16,6 +16,7 @@ type File struct {
 
 type FileRepository interface {
 	UploadAvatar(header *multipart.FileHeader, directory string) (string, error)
+	UploadBanner(header *multipart.FileHeader, directory string) (string, error)
 	UploadFile(header *multipart.FileHeader, directory, filename, mimetype string) (string, error)
 	DeleteImage(key string) error
 }

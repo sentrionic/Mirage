@@ -88,6 +88,10 @@ func (s *userService) ChangeAvatar(header *multipart.FileHeader, directory strin
 	return s.FileRepository.UploadAvatar(header, directory)
 }
 
+func (s *userService) ChangeBanner(header *multipart.FileHeader, directory string) (string, error) {
+	return s.FileRepository.UploadBanner(header, directory)
+}
+
 func (s *userService) DeleteImage(key string) error {
 	return s.FileRepository.DeleteImage(key)
 }

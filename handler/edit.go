@@ -20,6 +20,7 @@ type editAccountReq struct {
 	Email       string                `form:"email"`
 	Bio         *string               `form:"bio"`
 	Image       *multipart.FileHeader `form:"image"`
+	Banner      *multipart.FileHeader `form:"banner"`
 }
 
 func (r editAccountReq) Validate() error {
@@ -96,6 +97,35 @@ func (h *Handler) EditAccount(c *gin.Context) {
 		_ = h.UserService.DeleteImage(authUser.Image)
 
 		authUser.Image = url
+	}
+
+	if req.Banner != nil {
+		// Validate image mime-type is allowable
+		mimeType := req.Banner.Header.Get("Content-Type")
+
+		if valid := isAllowedImageType(mimeType); !valid {
+			e := apperrors.NewBadRequest("image must be 'image/jpeg' or 'image/png'")
+			c.JSON(e.Status(), gin.H{
+				"error": e,
+			})
+			return
+		}
+
+		directory := fmt.Sprintf("header_photo/%s", authUser.ID)
+		url, err := h.UserService.ChangeBanner(req.Banner, directory)
+
+		if err != nil {
+			c.JSON(500, gin.H{
+				"error": err,
+			})
+			return
+		}
+
+		if authUser.Banner != nil {
+			_ = h.UserService.DeleteImage(authUser.Image)
+		}
+
+		authUser.Banner = &url
 	}
 
 	err = h.UserService.Update(authUser)

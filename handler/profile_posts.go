@@ -58,6 +58,7 @@ func (h *Handler) GetProfilePosts(c *gin.Context) {
 					IsRetweet: p.UserID != user.ID,
 					File:      p.File,
 					Author:    p.User.NewProfileResponse(userId),
+					CreatedAt: p.CreatedAt,
 				}
 				response = append(response, post)
 			}

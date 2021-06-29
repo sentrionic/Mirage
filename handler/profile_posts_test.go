@@ -23,12 +23,13 @@ func getPostResponse(posts *[]model.Post) []model.PostResponse {
 
 	for _, p := range *posts {
 		post := model.PostResponse{
-			ID:       p.ID,
-			Text:     p.Text,
-			Likes:    uint(len(p.Likes)),
-			Retweets: uint(len(p.Retweets)),
-			File:     p.File,
-			Author:   p.User.NewProfileResponse(""),
+			ID:        p.ID,
+			Text:      p.Text,
+			Likes:     uint(len(p.Likes)),
+			Retweets:  uint(len(p.Retweets)),
+			File:      p.File,
+			Author:    p.User.NewProfileResponse(""),
+			CreatedAt: p.CreatedAt,
 		}
 		response = append(response, post)
 	}

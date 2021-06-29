@@ -123,7 +123,6 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 	var posts []model.Post
 
 	query := r.DB.
-		Debug().
 		Preload("Likes").
 		Preload("Retweets").
 		Preload("File").

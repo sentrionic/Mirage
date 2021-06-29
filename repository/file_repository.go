@@ -54,7 +54,7 @@ func (s *s3FileRepository) UploadAvatar(header *multipart.FileHeader, directory 
 		return "", err
 	}
 
-	img := imaging.Resize(src, 150, 0, imaging.Lanczos)
+	img := imaging.Resize(src, 400, 0, imaging.Lanczos)
 
 	buf := new(bytes.Buffer)
 	err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 75})
@@ -121,4 +121,49 @@ func (s *s3FileRepository) DeleteImage(key string) error {
 	})
 
 	return err
+}
+
+func (s *s3FileRepository) UploadBanner(header *multipart.FileHeader, directory string) (string, error) {
+	uploader := s3manager.NewUploader(s.S3Session)
+
+	id, _ := service.GenerateId()
+	key := fmt.Sprintf("files/%s/%s.jpeg", directory, id)
+
+	file, err := header.Open()
+
+	if err != nil {
+		return "", err
+	}
+
+	src, _, err := image.Decode(file)
+
+	if err != nil {
+		return "", err
+	}
+
+	img := imaging.Resize(src, 1500, 0, imaging.Lanczos)
+
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 75})
+
+	if err != nil {
+		return "", err
+	}
+
+	up, err := uploader.Upload(&s3manager.UploadInput{
+		Body:        buf,
+		Bucket:      aws.String(s.BucketName),
+		ContentType: aws.String("image/jpeg"),
+		Key:         aws.String(key),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	if err := file.Close(); err != nil {
+		return "", err
+	}
+
+	return up.Location, nil
 }

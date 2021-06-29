@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
 	"github.com/sentrionic/mirage/handler/middleware"
 	"github.com/sentrionic/mirage/model"
 	"github.com/sentrionic/mirage/model/apperrors"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -31,6 +33,15 @@ func NewHandler(c *Config) {
 		PostService:  c.PostService,
 		MaxBodyBytes: c.MaxBodyBytes,
 	}
+
+	// set cors settings
+	origin := os.Getenv("CORS_ORIGIN")
+	options := cors.New(cors.Options{
+		AllowedOrigins:   []string{origin},
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+	})
+	c.R.Use(options)
 
 	c.R.Use(middleware.ContextUser())
 	c.R.NoRoute(func(c *gin.Context) {

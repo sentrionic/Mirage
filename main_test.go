@@ -289,6 +289,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, false, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
 				assert.NotNil(t, respBody.Author)
+				assert.NotNil(t, respBody.CreatedAt)
 				assert.Nil(t, respBody.File)
 
 				author := respBody.Author
@@ -393,6 +394,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, false, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
 				assert.NotNil(t, respBody.Author)
+				assert.NotNil(t, respBody.CreatedAt)
 				assert.Nil(t, respBody.File)
 
 				author := respBody.Author
@@ -475,6 +477,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, uint(0), post.Retweets)
 				assert.Equal(t, false, post.Liked)
 				assert.Equal(t, false, post.Retweeted)
+				assert.NotNil(t, post.CreatedAt)
 				assert.NotNil(t, post.ID)
 				assert.NotNil(t, post.Author)
 				assert.Nil(t, post.File)
@@ -520,6 +523,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, false, post.Retweeted)
 				assert.NotNil(t, post.ID)
 				assert.NotNil(t, post.Author)
+				assert.NotNil(t, post.CreatedAt)
 				assert.Nil(t, post.File)
 
 				author := post.Author
@@ -658,6 +662,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, true, post.Retweeted)
 				assert.NotNil(t, post.ID)
 				assert.NotNil(t, post.Author)
+				assert.NotNil(t, post.CreatedAt)
 				assert.Nil(t, post.File)
 
 				author := post.Author
@@ -700,6 +705,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, true, post.Retweeted)
 				assert.NotNil(t, post.ID)
 				assert.NotNil(t, post.Author)
+				assert.NotNil(t, post.CreatedAt)
 				assert.Nil(t, post.File)
 
 				author := post.Author
@@ -735,6 +741,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, false, respBody.Liked)
 				assert.Equal(t, true, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
+				assert.NotNil(t, respBody.CreatedAt)
 				assert.NotNil(t, respBody.Author)
 				assert.Nil(t, respBody.File)
 
@@ -772,6 +779,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, false, respBody.Retweeted)
 				assert.NotNil(t, respBody.ID)
 				assert.NotNil(t, respBody.Author)
+				assert.NotNil(t, respBody.CreatedAt)
 				assert.Nil(t, respBody.File)
 
 				author := respBody.Author

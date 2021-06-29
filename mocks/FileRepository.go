@@ -48,6 +48,27 @@ func (_m *FileRepository) UploadAvatar(header *multipart.FileHeader, directory s
 	return r0, r1
 }
 
+// UploadBanner provides a mock function with given fields: header, directory
+func (_m *FileRepository) UploadBanner(header *multipart.FileHeader, directory string) (string, error) {
+	ret := _m.Called(header, directory)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(*multipart.FileHeader, string) string); ok {
+		r0 = rf(header, directory)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*multipart.FileHeader, string) error); ok {
+		r1 = rf(header, directory)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UploadFile provides a mock function with given fields: header, directory, filename, mimetype
 func (_m *FileRepository) UploadFile(header *multipart.FileHeader, directory string, filename string, mimetype string) (string, error) {
 	ret := _m.Called(header, directory, filename, mimetype)

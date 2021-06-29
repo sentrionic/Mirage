@@ -11,16 +11,18 @@ type AccountResponse struct {
 	Username    string  `json:"username"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image"`
+	Banner      *string `json:"banner"`
 	Bio         *string `json:"bio"`
 }
 
 func (user *User) NewAccountResponse() AccountResponse {
 	return AccountResponse{
 		ID:          user.ID,
-		Email:       user.Email,
 		Username:    user.Username,
 		DisplayName: user.DisplayName,
+		Email:       user.Email,
 		Image:       user.Image,
+		Banner:      user.Banner,
 		Bio:         user.Bio,
 	}
 }
@@ -30,6 +32,7 @@ type Profile struct {
 	Username    string  `json:"username"`
 	DisplayName string  `json:"displayName"`
 	Image       string  `json:"image"`
+	Banner      *string `json:"banner"`
 	Bio         *string `json:"bio"`
 	Followers   uint    `json:"followers"`
 	Followee    uint    `json:"followee"`
@@ -42,6 +45,7 @@ func (user *User) NewProfileResponse(id string) Profile {
 		Username:    user.Username,
 		DisplayName: user.DisplayName,
 		Image:       user.Image,
+		Banner:      user.Banner,
 		Bio:         user.Bio,
 		Followers:   uint(len(user.Followers)),
 		Followee:    uint(len(user.Followee)),
@@ -69,6 +73,7 @@ type User struct {
 	Email       string `gorm:"not null;uniqueIndex"`
 	Password    string `gorm:"not null" json:"-"`
 	Image       string `gorm:"not null"`
+	Banner      *string
 	Bio         *string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -84,6 +89,7 @@ type UserService interface {
 	Login(email, password string) (*User, error)
 	Update(user *User) error
 	ChangeAvatar(header *multipart.FileHeader, directory string) (string, error)
+	ChangeBanner(header *multipart.FileHeader, directory string) (string, error)
 	DeleteImage(key string) error
 	ChangeFollow(user *User, current string) error
 	Search(term string) (*[]User, error)

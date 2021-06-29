@@ -35,6 +35,27 @@ func (_m *UserService) ChangeAvatar(header *multipart.FileHeader, directory stri
 	return r0, r1
 }
 
+// ChangeBanner provides a mock function with given fields: header, directory
+func (_m *UserService) ChangeBanner(header *multipart.FileHeader, directory string) (string, error) {
+	ret := _m.Called(header, directory)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(*multipart.FileHeader, string) string); ok {
+		r0 = rf(header, directory)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*multipart.FileHeader, string) error); ok {
+		r1 = rf(header, directory)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ChangeFollow provides a mock function with given fields: user, current
 func (_m *UserService) ChangeFollow(user *model.User, current string) error {
 	ret := _m.Called(user, current)
