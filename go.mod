@@ -2,6 +2,8 @@ module github.com/sentrionic/mirage
 
 go 1.16
 
+// +heroku goVersion go1.16
+
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/aws/aws-sdk-go v1.38.64
