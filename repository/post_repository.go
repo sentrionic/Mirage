@@ -102,17 +102,27 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 		Preload("User.Followers").
 		Joins("LEFT JOIN followers on \"posts\".user_id = followers.user_id").
 		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
-		Where("followers.follower_id = ?", userId).
-		Or("r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = ?)", userId)
+		Where(`
+			"posts".user_id = @id
+			OR (
+				followers.follower_id = @id
+				OR r.user_id = @id
+				OR r.user_id IN (SELECT id
+					from "users"
+					join followee f on "users".id = f.followee_id
+					WHERE f.user_id = @id
+				)
+    		)
+		`, sql.Named("id", userId))
 
 	if cursor != "" {
-		cursor = cursor[:len(cursor)-6]
+		cursor = strings.Replace(cursor, " ", "+", 1)
 		query.
-			Where("created_at < ?", cursor)
+			Where("\"posts\".created_at::timestamptz < ?", cursor)
 	}
 
 	query.
-		Order("created_at, r.created_at DESC").
+		Order("created_at DESC, r.created_at DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 
@@ -129,16 +139,16 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 		Preload("User.Followers").
 		Preload("User.Followers").
 		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
-		Where("\"posts\".user_id = @id OR r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id)", sql.Named("id", id))
+		Where("(\"posts\".user_id = @id OR r.user_id IN (SELECT id from \"users\" join followee f on \"users\".id = f.followee_id WHERE f.user_id = @id))", sql.Named("id", id))
 
 	if cursor != "" {
-		cursor = cursor[:len(cursor)-6]
+		cursor = strings.Replace(cursor, " ", "+", 1)
 		query.
-			Where("created_at < ?", cursor)
+			Where("\"posts\".created_at::timestamptz < ?", cursor)
 	}
 
 	query.
-		Order("created_at, r.created_At DESC").
+		Order("created_at DESC, r.created_at DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 
@@ -158,9 +168,9 @@ func (r *postRepository) Likes(id, cursor string) (*[]model.Post, error) {
 		Where("pl.user_id = ?", id)
 
 	if cursor != "" {
-		cursor = cursor[:len(cursor)-6]
+		cursor = strings.Replace(cursor, " ", "+", 1)
 		query.
-			Where("created_at < ?", cursor)
+			Where("created_at::timestamptz < ?", cursor)
 	}
 
 	query.
@@ -188,8 +198,8 @@ func (r *postRepository) GetPostsForHashtag(term, cursor string) (*[]model.Post,
 		Where("@term ILIKE ANY (\"posts\".hash_tags)", sql.Named("term", strings.ToLower(term)))
 
 	if cursor != "" {
-		cursor = cursor[:len(cursor)-6]
-		query.Where("created_at < ?", cursor)
+		cursor = strings.Replace(cursor, " ", "+", 1)
+		query.Where("created_at::timestamptz < ?", cursor)
 	}
 
 	query.

@@ -693,10 +693,10 @@ func TestMain_E2E(t *testing.T) {
 				assert.NoError(t, err)
 
 				assert.NotEmpty(t, respBody.Posts)
-				assert.Equal(t, 1, len(respBody.Posts))
+				assert.Equal(t, 2, len(respBody.Posts))
 				assert.False(t, respBody.HasMore)
 
-				post := respBody.Posts[0]
+				post := respBody.Posts[1]
 
 				assert.NotNil(t, post.Text)
 				assert.Equal(t, uint(0), post.Likes)
