@@ -93,7 +93,6 @@ func (r *postRepository) RemoveRetweet(post *model.Post, uid string) error {
 
 func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 	var posts []model.Post
-
 	query := r.DB.
 		Preload("Likes").
 		Preload("Retweets").
@@ -103,16 +102,15 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 		Joins("LEFT JOIN followers on \"posts\".user_id = followers.user_id").
 		Joins("LEFT JOIN retweets r on \"posts\".id = r.post_id").
 		Where(`
-			"posts".user_id = @id
-			OR (
-				followers.follower_id = @id
-				OR r.user_id = @id
-				OR r.user_id IN (SELECT id
-					from "users"
-					join followee f on "users".id = f.followee_id
-					WHERE f.user_id = @id
-				)
-    		)
+			("posts".user_id = @id
+			OR followers.follower_id = @id
+			OR r.user_id = @id
+			OR r.user_id IN (
+				SELECT id
+				from "users"
+				join followee f on "users".id = f.followee_id
+				WHERE f.user_id = @id
+			))
 		`, sql.Named("id", userId))
 
 	if cursor != "" {
@@ -122,7 +120,7 @@ func (r *postRepository) Feed(userId, cursor string) (*[]model.Post, error) {
 	}
 
 	query.
-		Order("created_at DESC, r.created_at DESC").
+		Order("(CASE when r.created_at notnull THEN r.created_at ELSE \"posts\".created_at end) DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 
@@ -148,7 +146,7 @@ func (r *postRepository) List(id, cursor string) (*[]model.Post, error) {
 	}
 
 	query.
-		Order("created_at DESC, r.created_at DESC").
+		Order("(CASE when r.created_at notnull THEN r.created_at ELSE \"posts\".created_at end) DESC").
 		Limit(model.LIMIT + 1).
 		Find(&posts)
 
