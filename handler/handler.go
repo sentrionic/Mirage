@@ -71,6 +71,7 @@ func NewHandler(c *Config) {
 	ug.GET("/:username", h.GetProfile)
 	ug.GET("/:username/posts", h.GetProfilePosts)
 	ug.GET("/:username/likes", h.GetProfileLikes)
+	ug.GET("/:username/media", h.GetProfileMedia)
 
 	ug.Use(middleware.AuthUser())
 	ug.GET("", h.SearchProfiles)

@@ -27,3 +27,6 @@ lint:
 
 build:
 	go build github.com/sentrionic/mirage
+
+fmt:
+	go fmt github.com/sentrionic/...

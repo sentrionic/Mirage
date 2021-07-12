@@ -41,7 +41,7 @@ func (post *Post) NewFeedResponse(id string) PostResponse {
 		Liked:     post.IsLiked(id),
 		Retweets:  uint(len(post.Retweets)),
 		Retweeted: post.IsRetweeted(id),
-		IsRetweet: !post.User.IsFollowing(id),
+		IsRetweet: post.UserID != id && !post.User.IsFollowing(id),
 		File:      post.File,
 		Author:    post.User.NewProfileResponse(id),
 		CreatedAt: post.CreatedAt,
@@ -96,6 +96,7 @@ type PostService interface {
 	GetUserFeed(userId, cursor string) (*[]Post, error)
 	ProfilePosts(id, cursor string) (*[]Post, error)
 	ProfileLikes(id, cursor string) (*[]Post, error)
+	ProfileMedia(id, cursor string) (*[]Post, error)
 	SearchPosts(tag, cursor string) (*[]Post, error)
 }
 
@@ -111,4 +112,5 @@ type PostRepository interface {
 	List(id, cursor string) (*[]Post, error)
 	Likes(id, cursor string) (*[]Post, error)
 	GetPostsForHashtag(tag, cursor string) (*[]Post, error)
+	Media(id, cursor string) (*[]Post, error)
 }

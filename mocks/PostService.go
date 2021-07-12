@@ -120,6 +120,29 @@ func (_m *PostService) ProfileLikes(id string, cursor string) (*[]model.Post, er
 	return r0, r1
 }
 
+// ProfileMedia provides a mock function with given fields: id, cursor
+func (_m *PostService) ProfileMedia(id string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(id, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(id, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(id, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ProfilePosts provides a mock function with given fields: id, cursor
 func (_m *PostService) ProfilePosts(id string, cursor string) (*[]model.Post, error) {
 	ret := _m.Called(id, cursor)

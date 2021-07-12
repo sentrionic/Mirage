@@ -192,6 +192,29 @@ func (_m *PostRepository) List(id string, cursor string) (*[]model.Post, error) 
 	return r0, r1
 }
 
+// Media provides a mock function with given fields: id, cursor
+func (_m *PostRepository) Media(id string, cursor string) (*[]model.Post, error) {
+	ret := _m.Called(id, cursor)
+
+	var r0 *[]model.Post
+	if rf, ok := ret.Get(0).(func(string, string) *[]model.Post); ok {
+		r0 = rf(id, cursor)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]model.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(id, cursor)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // RemoveLike provides a mock function with given fields: post, uid
 func (_m *PostRepository) RemoveLike(post *model.Post, uid string) error {
 	ret := _m.Called(post, uid)

@@ -556,3 +556,45 @@ func TestPostService_SearchPosts(t *testing.T) {
 		mockPostRepository.AssertExpectations(t)
 	})
 }
+
+func TestPostService_ProfileMedia(t *testing.T) {
+
+	profile := fixture.GetMockUser()
+	posts := make([]model.Post, 0)
+
+	for i := 0; i < 5; i++ {
+		mockPost := fixture.GetMockPost()
+		file := fixture.GetMockFile(mockPost.ID)
+		mockPost.File = file
+		posts = append(posts, *mockPost)
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		mockPostRepository := new(mocks.PostRepository)
+		ps := NewPostService(&PSConfig{
+			PostRepository: mockPostRepository,
+		})
+		mockPostRepository.On("Media", profile.ID, "").Return(&posts, nil)
+
+		rsp, err := ps.ProfileMedia(profile.ID, "")
+
+		assert.NoError(t, err)
+		assert.Equal(t, len(*rsp), 5)
+		mockPostRepository.AssertExpectations(t)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		mockPostRepository := new(mocks.PostRepository)
+		ps := NewPostService(&PSConfig{
+			PostRepository: mockPostRepository,
+		})
+
+		mockPostRepository.On("Media", profile.ID, "").Return(nil, fmt.Errorf("some error down the call chain"))
+
+		rsp, err := ps.ProfileMedia(profile.ID, "")
+
+		assert.Nil(t, rsp)
+		assert.Error(t, err)
+		mockPostRepository.AssertExpectations(t)
+	})
+}

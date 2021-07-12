@@ -122,3 +122,7 @@ func (p *postService) ProfileLikes(id, cursor string) (*[]model.Post, error) {
 func (p *postService) SearchPosts(tag, cursor string) (*[]model.Post, error) {
 	return p.PostRepository.GetPostsForHashtag(tag, cursor)
 }
+
+func (p *postService) ProfileMedia(id, cursor string) (*[]model.Post, error) {
+	return p.PostRepository.Media(id, cursor)
+}

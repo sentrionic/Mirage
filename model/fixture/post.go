@@ -14,3 +14,14 @@ func GetMockPost() *model.Post {
 		CreatedAt: time.Now(),
 	}
 }
+
+func GetMockFile(id string) *model.File {
+	return &model.File{
+		ID:        RandID(),
+		PostId:    id,
+		Url:       RandStringRunes(10),
+		FileType:  "image/jpeg",
+		Filename:  RandStringRunes(10),
+		CreatedAt: time.Now(),
+	}
+}

@@ -696,7 +696,7 @@ func TestMain_E2E(t *testing.T) {
 				assert.Equal(t, 2, len(respBody.Posts))
 				assert.False(t, respBody.HasMore)
 
-				post := respBody.Posts[1]
+				post := respBody.Posts[0]
 
 				assert.NotNil(t, post.Text)
 				assert.Equal(t, uint(0), post.Likes)

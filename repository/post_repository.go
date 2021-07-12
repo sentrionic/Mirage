@@ -207,3 +207,29 @@ func (r *postRepository) GetPostsForHashtag(term, cursor string) (*[]model.Post,
 
 	return posts, query.Error
 }
+
+func (r *postRepository) Media(id, cursor string) (*[]model.Post, error) {
+	var posts []model.Post
+
+	query := r.DB.
+		Preload("Likes").
+		Preload("Retweets").
+		Preload("File").
+		Preload("User.Followers").
+		Preload("User.Followers").
+		Joins("LEFT JOIN files f on \"posts\".id = f.post_id").
+		Where("\"posts\".user_id = ? AND f IS NOT NULL", id)
+
+	if cursor != "" {
+		cursor = strings.Replace(cursor, " ", "+", 1)
+		query.
+			Where("created_at::timestamptz < ?", cursor)
+	}
+
+	query.
+		Order("created_at DESC").
+		Limit(model.LIMIT + 1).
+		Find(&posts)
+
+	return &posts, query.Error
+}
