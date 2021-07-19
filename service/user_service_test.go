@@ -133,7 +133,7 @@ func TestRegister(t *testing.T) {
 			UserRepository: mockUserRepository,
 		})
 
-		mockErr := apperrors.NewConflict("email", mockUser.Email)
+		mockErr := apperrors.NewConflict("email")
 
 		// We can use Run method to modify the user when the Create method is called.
 		//  We can then chain on a Return method to return no error

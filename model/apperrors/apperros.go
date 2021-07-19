@@ -94,10 +94,10 @@ func NewBadRequest(reason string) *Error {
 }
 
 // NewConflict to create an error for 409
-func NewConflict(name string, value string) *Error {
+func NewConflict(name string) *Error {
 	return &Error{
 		Type:    Conflict,
-		Message: fmt.Sprintf("resource: %v with value: %v already exists", name, value),
+		Message: fmt.Sprintf("A user with that %v already exists", name),
 	}
 }
 

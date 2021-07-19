@@ -93,7 +93,37 @@ func TestHandler_Register(t *testing.T) {
 				"email":       user.Email,
 			},
 			buildStubs: func(mockUserService *mocks.UserService) {
-				mockUserService.On("Register", reqUser).Return(nil, apperrors.NewConflict("User Already Exists", reqUser.Email))
+				mockUserService.On("Register", reqUser).Return(nil, apperrors.NewInternal())
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "Email already in use",
+			body: gin.H{
+				"username":    user.Username,
+				"password":    user.Password,
+				"displayName": user.DisplayName,
+				"email":       user.Email,
+			},
+			buildStubs: func(mockUserService *mocks.UserService) {
+				mockUserService.On("Register", reqUser).Return(nil, apperrors.NewConflict("email"))
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
+				require.Equal(t, http.StatusConflict, recorder.Code)
+			},
+		},
+		{
+			name: "Username already in use",
+			body: gin.H{
+				"username":    user.Username,
+				"password":    user.Password,
+				"displayName": user.DisplayName,
+				"email":       user.Email,
+			},
+			buildStubs: func(mockUserService *mocks.UserService) {
+				mockUserService.On("Register", reqUser).Return(nil, apperrors.NewConflict("username"))
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder, mockUserService *mocks.UserService) {
 				require.Equal(t, http.StatusConflict, recorder.Code)

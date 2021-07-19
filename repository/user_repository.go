@@ -75,8 +75,13 @@ func (r *userRepository) Create(user *model.User) (*model.User, error) {
 	if result := r.DB.Create(&user); result.Error != nil {
 		// check unique constraint
 		if isDuplicateKeyError(result.Error) {
-			log.Printf("Could not create a user with email: %v. Reason: %v\n", user.Email, result.Error)
-			return nil, apperrors.NewConflict("email", user.Email)
+			if strings.Contains(result.Error.Error(), "email") {
+				log.Printf("Could not create a user with email: %v. Reason: %v\n", user.Email, result.Error)
+				return nil, apperrors.NewConflict("email")
+			} else if strings.Contains(result.Error.Error(), "username") {
+				log.Printf("Could not create a user with username: %v. Reason: %v\n", user.Username, result.Error)
+				return nil, apperrors.NewConflict("username")
+			}
 		}
 
 		log.Printf("Could not create a user with email: %v. Reason: %v\n", user.Email, result.Error)
@@ -88,8 +93,23 @@ func (r *userRepository) Create(user *model.User) (*model.User, error) {
 
 // Update updates the user in the DB
 func (r *userRepository) Update(user *model.User) error {
-	result := r.DB.Save(&user)
-	return result.Error
+	if result := r.DB.Save(&user); result.Error != nil {
+		// check unique constraint
+		if isDuplicateKeyError(result.Error) {
+			if strings.Contains(result.Error.Error(), "email") {
+				log.Printf("Could not update a user with email: %v. Reason: %v\n", user.Email, result.Error)
+				return apperrors.NewConflict("email")
+			} else if strings.Contains(result.Error.Error(), "username") {
+				log.Printf("Could not create a user with username: %v. Reason: %v\n", user.Username, result.Error)
+				return apperrors.NewConflict("username")
+			}
+		}
+
+		log.Printf("Could not update a user with email: %v. Reason: %v\n", user.Email, result.Error)
+		return apperrors.NewInternal()
+	}
+
+	return nil
 }
 
 func (r *userRepository) AddFollow(userId, currentId string) error {
