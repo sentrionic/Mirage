@@ -6,13 +6,14 @@ import (
 )
 
 type AccountResponse struct {
-	ID          string  `json:"id"`
-	Email       string  `json:"email"`
-	Username    string  `json:"username"`
-	DisplayName string  `json:"displayName"`
-	Image       string  `json:"image"`
-	Banner      *string `json:"banner"`
-	Bio         *string `json:"bio"`
+	ID          string    `json:"id"`
+	Email       string    `json:"email"`
+	Username    string    `json:"username"`
+	DisplayName string    `json:"displayName"`
+	Image       string    `json:"image"`
+	Banner      *string   `json:"banner"`
+	Bio         *string   `json:"bio"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 func (user *User) NewAccountResponse() AccountResponse {
@@ -24,19 +25,21 @@ func (user *User) NewAccountResponse() AccountResponse {
 		Image:       user.Image,
 		Banner:      user.Banner,
 		Bio:         user.Bio,
+		CreatedAt:   user.CreatedAt,
 	}
 }
 
 type Profile struct {
-	ID          string  `json:"id"`
-	Username    string  `json:"username"`
-	DisplayName string  `json:"displayName"`
-	Image       string  `json:"image"`
-	Banner      *string `json:"banner"`
-	Bio         *string `json:"bio"`
-	Followers   uint    `json:"followers"`
-	Followee    uint    `json:"followee"`
-	Following   bool    `json:"following"`
+	ID          string    `json:"id"`
+	Username    string    `json:"username"`
+	DisplayName string    `json:"displayName"`
+	Image       string    `json:"image"`
+	Banner      *string   `json:"banner"`
+	Bio         *string   `json:"bio"`
+	Followers   uint      `json:"followers"`
+	Followee    uint      `json:"followee"`
+	Following   bool      `json:"following"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 func (user *User) NewProfileResponse(id string) Profile {
@@ -50,6 +53,7 @@ func (user *User) NewProfileResponse(id string) Profile {
 		Followers:   uint(len(user.Followers)),
 		Followee:    uint(len(user.Followee)),
 		Following:   user.IsFollowing(id),
+		CreatedAt:   user.CreatedAt,
 	}
 }
 
