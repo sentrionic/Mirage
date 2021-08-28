@@ -9,17 +9,17 @@ object Versions {
     const val versionName = "1.0"
     const val jvmTarget = "1.8"
 
-    const val kotlin = "1.5.10"
+    const val kotlin = "1.5.21"
     const val gradle = "7.1.0-alpha02"
     const val hilt = "2.37"
     const val junit5 = "1.7.1.1"
-    const val kotlin_compiler_extension = "1.0.0-beta09"
+    const val kotlin_compiler_extension = "1.0.1"
 
     const val core_ktx = "1.5.0"
     const val app_compat = "1.3.0"
     const val material = "1.3.0"
     const val androidx_ui = "1.0.0-alpha07"
-    const val compose = "1.0.0"
+    const val compose = "1.0.1"
     const val compose_activity = "1.3.0"
     const val hilt_lifecycle_viewmodel = "1.0.0-alpha03"
     const val nav_component = "2.3.5"
@@ -30,5 +30,5 @@ object Versions {
     const val leak_canary = "2.5"
     const val room =  "2.3.0"
     const val junit_jupiter = "5.7.0"
-    const val datastore = "1.0.0-rc01"
+    const val datastore = "1.0.0"
 }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -44,6 +45,7 @@ fun AccountScreen(
     navController: NavController,
     settingsDataStore: SettingsDataStore,
     isNetworkAvailable: Boolean,
+    imageLoader: ImageLoader,
     scaffoldState: ScaffoldState,
     refreshViewManager: RefreshViewManager
 ) {
@@ -114,7 +116,8 @@ fun AccountScreen(
                                 openDialog = { showThemeDialog.value = true },
                                 handleNavigation = {
                                     navController.navigate(Screen.UpdateAccount.route + "/${user.id}")
-                                }
+                                },
+                                imageLoader = imageLoader
                             )
                         }
 
@@ -193,7 +196,8 @@ fun AccountScreen(
                                             onToggleFollow = { onTriggerEvent(ToggleFollowEvent(it)) },
                                             onToggleDelete = { onTriggerEvent(DeletePostEvent(it)) },
                                             authId = user.id,
-                                            isDarkTheme = isDarkTheme
+                                            isDarkTheme = isDarkTheme,
+                                            imageLoader = imageLoader
                                         )
                                     }
                                 }

@@ -34,7 +34,7 @@ open class TextFieldState(
 
     fun enableShowErrors() {
         // only show errors if the text was at least once focused
-        if (isFocusedDirty) {
+        if (isFocusedDirty && !isFocused) {
             displayErrors = true
         }
     }

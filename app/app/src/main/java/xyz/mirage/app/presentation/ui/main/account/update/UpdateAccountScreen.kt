@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.business.domain.core.*
 import xyz.mirage.app.presentation.core.theme.AppTheme
@@ -39,7 +40,8 @@ fun UpdateAccountScreen(
     onTriggerEvent: (UpdateAccountEvents) -> Unit,
     isDarkTheme: Boolean,
     scaffoldState: ScaffoldState,
-    isNetworkAvailable: Boolean
+    isNetworkAvailable: Boolean,
+    imageLoader: ImageLoader,
 ) {
 
     if (!state.onLoad) {
@@ -106,14 +108,16 @@ fun UpdateAccountScreen(
                         UpdateBanner(
                             modifier = Modifier.align(Alignment.Center),
                             state = state,
-                            onTriggerEvent = onTriggerEvent
+                            onTriggerEvent = onTriggerEvent,
+                            imageLoader = imageLoader
                         )
 
                         UpdateAvatar(
                             modifier = Modifier.align(Alignment.BottomStart),
                             isDarkTheme = isDarkTheme,
                             state = state,
-                            onTriggerEvent = onTriggerEvent
+                            onTriggerEvent = onTriggerEvent,
+                            imageLoader = imageLoader
                         )
                     }
 

@@ -2,14 +2,11 @@ package xyz.mirage.app.presentation.ui.main.home.create
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -27,7 +24,6 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-@DelicateCoroutinesApi
 class CreatePostViewModel
 @Inject
 constructor(
@@ -146,7 +142,6 @@ constructor(
         }
     }
 
-    @DelicateCoroutinesApi
     private fun getAccount() {
         state.value.let { state ->
             getAccountFromCache.execute(

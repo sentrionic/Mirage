@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -38,6 +39,7 @@ fun UpdateAvatar(
     state: UpdateAccountState,
     modifier: Modifier,
     isDarkTheme: Boolean,
+    imageLoader: ImageLoader,
     onTriggerEvent: (UpdateAccountEvents) -> Unit,
 ) {
     val cropLauncher = rememberLauncherForActivityResult(
@@ -67,7 +69,7 @@ fun UpdateAvatar(
         val url = state.imageURI ?: user.image
         val painter = rememberImagePainter(
             data = url,
-            builder = { crossfade(true) }
+            imageLoader = imageLoader,
         )
 
         Image(

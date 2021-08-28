@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -21,12 +22,13 @@ import xyz.mirage.app.business.domain.models.Profile
 @Composable
 fun Avatar(
     profile: Profile,
+    imageLoader: ImageLoader,
     onNavigateToProfileScreen: () -> Unit
 ) {
 
     val painter = rememberImagePainter(
         data = profile.image,
-        builder = { crossfade(true) }
+        imageLoader = imageLoader,
     )
 
     Image(

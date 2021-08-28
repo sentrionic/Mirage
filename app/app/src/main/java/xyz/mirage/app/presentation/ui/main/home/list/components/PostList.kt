@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -29,6 +30,7 @@ fun PostList(
     isDarkTheme: Boolean,
     onTriggerEvent: (PostListEvent) -> Unit,
     authId: String,
+    imageLoader: ImageLoader,
 ) {
     Box(
         modifier = Modifier
@@ -82,7 +84,8 @@ fun PostList(
                                     onToggleFollow = { onTriggerEvent(ToggleFollowEvent(it)) },
                                     onToggleDelete = { onTriggerEvent(DeletePostEvent(it)) },
                                     authId = authId,
-                                    isDarkTheme = isDarkTheme
+                                    isDarkTheme = isDarkTheme,
+                                    imageLoader = imageLoader
                                 )
                             }
                         }

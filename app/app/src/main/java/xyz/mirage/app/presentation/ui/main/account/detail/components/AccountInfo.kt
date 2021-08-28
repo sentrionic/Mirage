@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.R
 import xyz.mirage.app.business.domain.models.Account
@@ -25,6 +26,7 @@ import xyz.mirage.app.presentation.core.theme.PrimaryColor
 fun AccountInfo(
     user: Account,
     isDarkTheme: Boolean,
+    imageLoader: ImageLoader,
     openDialog: () -> Unit,
     handleNavigation: () -> Unit
 ) {
@@ -32,7 +34,8 @@ fun AccountInfo(
         user.banner?.let { url ->
             UserBanner(
                 url = url,
-                username = user.username
+                username = user.username,
+                imageLoader = imageLoader
             )
         } ?: Box(
             modifier = Modifier
@@ -44,7 +47,8 @@ fun AccountInfo(
         UserAvatar(
             url = user.image,
             modifier = Modifier.align(Alignment.BottomStart),
-            isDarkTheme = isDarkTheme
+            isDarkTheme = isDarkTheme,
+            imageLoader = imageLoader
         )
 
         Row(

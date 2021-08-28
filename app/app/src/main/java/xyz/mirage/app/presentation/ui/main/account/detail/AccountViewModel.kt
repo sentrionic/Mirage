@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import xyz.mirage.app.business.domain.core.*
@@ -27,7 +26,6 @@ import javax.inject.Inject
 private const val PAGE_SIZE = 20
 
 @HiltViewModel
-@DelicateCoroutinesApi
 class AccountViewModel
 @Inject
 constructor(

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.business.domain.models.Profile
 import xyz.mirage.app.presentation.ui.main.home.list.components.Avatar
@@ -18,7 +19,8 @@ import xyz.mirage.app.presentation.ui.main.home.list.components.Avatar
 @Composable
 fun ProfileListItem(
     profile: Profile,
-    onNavigateToProfileScreen: () -> Unit
+    onNavigateToProfileScreen: () -> Unit,
+    imageLoader: ImageLoader
 ) {
     Row(
         modifier = Modifier
@@ -31,7 +33,8 @@ fun ProfileListItem(
     ) {
         Avatar(
             profile = profile,
-            onNavigateToProfileScreen = onNavigateToProfileScreen
+            onNavigateToProfileScreen = onNavigateToProfileScreen,
+            imageLoader = imageLoader
         )
 
         Spacer(modifier = Modifier.size(12.dp))

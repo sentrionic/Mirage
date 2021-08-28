@@ -13,6 +13,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.presentation.core.theme.AppTheme
 import xyz.mirage.app.presentation.navigation.Screen
@@ -39,7 +40,8 @@ fun SearchScreen(
     onTriggerEvent: (SearchEvents) -> Unit,
     scaffoldState: ScaffoldState,
     refreshViewManager: RefreshViewManager,
-    authId: String
+    authId: String,
+    imageLoader: ImageLoader,
 ) {
     val listState = rememberLazyListState()
 
@@ -110,7 +112,8 @@ fun SearchScreen(
                                     onNavigateToProfileScreen = {
                                         val route = Screen.Profile.route + "/${profile.username}"
                                         navController.navigate(route)
-                                    }
+                                    },
+                                    imageLoader = imageLoader
                                 )
                                 CustomDivider(isDarkTheme = isDarkTheme)
                             }
@@ -149,7 +152,8 @@ fun SearchScreen(
                                         onToggleFollow = { onTriggerEvent(OnToggleFollow(it)) },
                                         onToggleDelete = { onTriggerEvent(DeletePostEvent(it)) },
                                         authId = authId,
-                                        isDarkTheme = isDarkTheme
+                                        isDarkTheme = isDarkTheme,
+                                        imageLoader = imageLoader
                                     )
                                 }
                             }

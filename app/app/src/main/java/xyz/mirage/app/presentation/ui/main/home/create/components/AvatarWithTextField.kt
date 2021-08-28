@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -33,6 +34,7 @@ import xyz.mirage.app.presentation.ui.shared.TextFieldError
 @Composable
 fun AvatarWithTextField(
     state: CreatePostState,
+    imageLoader: ImageLoader,
 ) {
     val controller = LocalSoftwareKeyboardController.current
 
@@ -43,7 +45,7 @@ fun AvatarWithTextField(
 
             val painter = rememberImagePainter(
                 data = account.image,
-                builder = { crossfade(true) }
+                imageLoader = imageLoader,
             )
 
             Image(

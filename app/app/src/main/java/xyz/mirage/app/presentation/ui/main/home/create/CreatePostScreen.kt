@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.presentation.core.theme.AppTheme
@@ -31,6 +32,7 @@ fun CreatePostScreen(
     state: CreatePostState,
     onTriggerEvent: (CreatePostEvents) -> Unit,
     scaffoldState: ScaffoldState,
+    imageLoader: ImageLoader,
 ) {
     val isDisabled = (!state.text.isValid || state.text.text.isEmpty()) && state.uri == null
 
@@ -65,11 +67,14 @@ fun CreatePostScreen(
             ) {
 
                 Column {
-                    AvatarWithTextField(state = state)
+                    AvatarWithTextField(
+                        state = state,
+                        imageLoader = imageLoader,
+                    )
                     state.uri?.let { uri ->
                         val painter = rememberImagePainter(
                             data = uri,
-                            builder = { crossfade(true) }
+                            imageLoader = imageLoader,
                         )
 
                         Image(

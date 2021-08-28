@@ -7,6 +7,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.presentation.core.theme.AppTheme
 import xyz.mirage.app.presentation.navigation.Screen
@@ -27,6 +28,7 @@ fun PostDetailScreen(
     scaffoldState: ScaffoldState,
     refreshViewManager: RefreshViewManager,
     authId: String,
+    imageLoader: ImageLoader,
 ) {
     if (!state.onLoad) {
         onTriggerEvent(PostEvent.OnToggleOnLoad)
@@ -69,7 +71,8 @@ fun PostDetailScreen(
                             navController.navigate(route)
                         },
                         authId = authId,
-                        onTriggerEvent = onTriggerEvent
+                        onTriggerEvent = onTriggerEvent,
+                        imageLoader = imageLoader
                     )
                 } ?: CircularIndeterminateProgressBar(isDisplayed = state.isLoading)
             }

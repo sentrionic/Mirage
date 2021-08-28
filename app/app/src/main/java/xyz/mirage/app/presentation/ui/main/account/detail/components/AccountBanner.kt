@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -20,10 +21,11 @@ import xyz.mirage.app.presentation.core.theme.PrimaryColor
 fun UserBanner(
     url: String,
     username: String,
+    imageLoader: ImageLoader
 ) {
     val painter = rememberImagePainter(
         data = url,
-        builder = { crossfade(true) }
+        imageLoader = imageLoader,
     )
 
     Image(

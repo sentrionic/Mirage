@@ -10,11 +10,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import kotlinx.coroutines.DelicateCoroutinesApi
 import xyz.mirage.app.business.datasources.datastore.SettingsDataStore
 import xyz.mirage.app.presentation.MainActivity
 import xyz.mirage.app.presentation.core.util.ConnectivityManager
@@ -42,7 +42,6 @@ import xyz.mirage.app.presentation.ui.main.search.SearchScreen
 import xyz.mirage.app.presentation.ui.main.search.SearchViewModel
 
 @ExperimentalAnimationApi
-@DelicateCoroutinesApi
 @ExperimentalCoilApi
 @ExperimentalComposeUiApi
 @Composable
@@ -51,7 +50,8 @@ fun Navigation(
     settingsDataStore: SettingsDataStore,
     connectivityManager: ConnectivityManager,
     sessionManager: SessionManager,
-    refreshViewManager: RefreshViewManager
+    refreshViewManager: RefreshViewManager,
+    imageLoader: ImageLoader,
 ) {
     val navController = rememberAnimatedNavController()
     val scaffoldState = rememberScaffoldState()
@@ -187,7 +187,8 @@ fun Navigation(
                 scaffoldState = scaffoldState,
                 navController = navController,
                 authId = sessionManager.state.value?.uid ?: "",
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
 
@@ -222,7 +223,8 @@ fun Navigation(
                 onTriggerEvent = viewModel::onTriggerEvent,
                 navController = navController,
                 authId = sessionManager.state.value?.uid ?: "",
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
 
@@ -246,6 +248,7 @@ fun Navigation(
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                 scaffoldState = scaffoldState,
                 navController = navController,
+                imageLoader = imageLoader
             )
         }
 
@@ -286,7 +289,8 @@ fun Navigation(
                 scaffoldState = scaffoldState,
                 navController = navController,
                 authId = sessionManager.state.value?.uid ?: "",
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
 
@@ -321,7 +325,8 @@ fun Navigation(
                 scaffoldState = scaffoldState,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                 authId = sessionManager.state.value?.uid ?: "",
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
 
@@ -330,14 +335,18 @@ fun Navigation(
             route = Screen.Account.route,
             exitTransition = { _, target ->
                 when (target.destination.route) {
-                    Screen.UpdateAccount.route ->
+                    Screen.UpdateAccount.route + "/{id}",
+                    Screen.PostDetail.route + "/{postId}",
+                    Screen.Profile.route + "/{username}" ->
                         slideExitTransition()
                     else -> null
                 }
             },
             popEnterTransition = { initial, _ ->
                 when (initial.destination.route) {
-                    Screen.UpdateAccount.route ->
+                    Screen.UpdateAccount.route + "/{id}",
+                    Screen.PostDetail.route + "/{postId}",
+                    Screen.Profile.route + "/{username}" ->
                         slidePopEnterTransition()
                     else -> null
                 }
@@ -359,7 +368,8 @@ fun Navigation(
                 settingsDataStore = settingsDataStore,
                 scaffoldState = scaffoldState,
                 isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
 
@@ -386,7 +396,8 @@ fun Navigation(
                 onTriggerEvent = viewModel::onTriggerEvent,
                 navController = navController,
                 scaffoldState = scaffoldState,
-                isNetworkAvailable = connectivityManager.isNetworkAvailable.value
+                isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
+                imageLoader = imageLoader
             )
         }
     }

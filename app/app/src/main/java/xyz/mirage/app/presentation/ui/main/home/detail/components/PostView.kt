@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.business.domain.models.Post
@@ -24,25 +25,18 @@ import xyz.mirage.app.presentation.ui.main.home.detail.PostEvent.DeletePostEvent
 import xyz.mirage.app.presentation.ui.main.home.detail.PostEvent.ToggleFollowEvent
 import xyz.mirage.app.presentation.ui.main.home.list.components.Avatar
 import xyz.mirage.app.presentation.ui.shared.DividerWithSpace
-import java.util.*
 
 @ExperimentalCoilApi
 @Composable
 fun PostView(
     post: Post,
+    imageLoader: ImageLoader,
     isDarkTheme: Boolean,
     onNavigateToProfileScreen: () -> Unit,
     onTriggerEvent: (PostEvent) -> Unit,
     authId: String,
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    val items = mutableListOf<String>()
-
-    when {
-        authId != post.profile.id && post.profile.following -> items.add("Unfollow")
-        authId != post.profile.id && !post.profile.following -> items.add("Follow")
-        authId == post.profile.id -> items.add("Delete")
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -58,7 +52,8 @@ fun PostView(
                 Row(modifier = Modifier.fillMaxWidth(0.9f)) {
                     Avatar(
                         profile = post.profile,
-                        onNavigateToProfileScreen = onNavigateToProfileScreen
+                        onNavigateToProfileScreen = onNavigateToProfileScreen,
+                        imageLoader = imageLoader
                     )
 
                     Spacer(modifier = Modifier.size(12.dp))
@@ -94,22 +89,23 @@ fun PostView(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false },
                     ) {
-                        items.forEach { option ->
+                        if (authId != post.profile.id) {
                             DropdownMenuItem(
                                 onClick = {
-                                    when {
-                                        option.lowercase(Locale.getDefault())
-                                            .contains("follow") -> {
-                                            onTriggerEvent(ToggleFollowEvent(post.profile.username))
-                                        }
-                                        option == "Delete" -> {
-                                            onTriggerEvent(DeletePostEvent(post.id))
-                                        }
-                                    }
+                                    onTriggerEvent(ToggleFollowEvent(post.profile.username))
                                     showMenu = false
                                 }
                             ) {
-                                Text(text = option)
+                                Text(text = if (post.profile.following) "Unfollow" else "Follow")
+                            }
+                        } else {
+                            DropdownMenuItem(
+                                onClick = {
+                                    onTriggerEvent(DeletePostEvent(post.id))
+                                    showMenu = false
+                                }
+                            ) {
+                                Text(text = "Delete")
                             }
                         }
                     }
@@ -135,9 +131,7 @@ fun PostView(
 
                 val painter = rememberImagePainter(
                     data = file.url,
-                    builder = {
-                        crossfade(true)
-                    }
+                    imageLoader = imageLoader,
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

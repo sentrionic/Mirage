@@ -6,6 +6,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import kotlinx.coroutines.launch
 import xyz.mirage.app.presentation.core.theme.AppTheme
@@ -28,6 +29,7 @@ fun HomeScreen(
     scaffoldState: ScaffoldState,
     refreshViewManager: RefreshViewManager,
     authId: String,
+    imageLoader: ImageLoader,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -85,6 +87,7 @@ fun HomeScreen(
                 isDarkTheme = isDarkTheme,
                 onTriggerEvent = onTriggerEvent,
                 authId = authId,
+                imageLoader = imageLoader
             )
         }
     }

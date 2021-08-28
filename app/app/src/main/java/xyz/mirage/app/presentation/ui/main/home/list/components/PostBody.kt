@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -21,7 +22,10 @@ import xyz.mirage.app.business.domain.models.Post
 
 @ExperimentalCoilApi
 @Composable
-fun PostBody(post: Post) {
+fun PostBody(
+    post: Post,
+    imageLoader: ImageLoader,
+) {
     post.text?.let {
         Text(
             text = it,
@@ -32,7 +36,7 @@ fun PostBody(post: Post) {
 
         val painter = rememberImagePainter(
             data = file.url,
-            builder = { crossfade(true) }
+            imageLoader = imageLoader,
         )
 
         Spacer(modifier = Modifier.height(10.dp))

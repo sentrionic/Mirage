@@ -5,9 +5,9 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
 import xyz.mirage.app.business.datasources.datastore.SettingsDataStore
 import xyz.mirage.app.presentation.core.util.ConnectivityManager
 import xyz.mirage.app.presentation.navigation.Navigation
@@ -16,9 +16,11 @@ import xyz.mirage.app.presentation.ui.main.refresh.RefreshViewManager
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@ExperimentalAnimationApi
+@ExperimentalCoilApi
+@ExperimentalComposeUiApi
 class MainActivity : AppCompatActivity() {
 
-    @DelicateCoroutinesApi
     @Inject
     lateinit var sessionManager: SessionManager
 
@@ -31,6 +33,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var refreshViewManager: RefreshViewManager
 
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
     override fun onStart() {
         super.onStart()
         connectivityManager.registerConnectionObserver(this)
@@ -41,10 +46,6 @@ class MainActivity : AppCompatActivity() {
         connectivityManager.unregisterConnectionObserver(this)
     }
 
-    @ExperimentalAnimationApi
-    @DelicateCoroutinesApi
-    @ExperimentalCoilApi
-    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,7 +55,8 @@ class MainActivity : AppCompatActivity() {
                 settingsDataStore = settingsDataStore,
                 connectivityManager = connectivityManager,
                 sessionManager = sessionManager,
-                refreshViewManager = refreshViewManager
+                refreshViewManager = refreshViewManager,
+                imageLoader = imageLoader
             )
         }
     }

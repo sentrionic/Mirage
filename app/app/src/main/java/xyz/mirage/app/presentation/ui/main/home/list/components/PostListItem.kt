@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import xyz.mirage.app.business.domain.models.Post
 
@@ -19,7 +20,8 @@ fun PostListItem(
     onToggleFollow: (String) -> Unit,
     onToggleDelete: (String) -> Unit,
     authId: String,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    imageLoader: ImageLoader,
 ) {
     Column(
         modifier = Modifier
@@ -37,7 +39,8 @@ fun PostListItem(
         Row {
             Avatar(
                 profile = post.profile,
-                onNavigateToProfileScreen = onNavigateToProfileScreen
+                onNavigateToProfileScreen = onNavigateToProfileScreen,
+                imageLoader = imageLoader
             )
             Spacer(
                 modifier = Modifier.size(12.dp)
@@ -47,9 +50,12 @@ fun PostListItem(
                     post = post,
                     authId = authId,
                     handleFollow = { onToggleFollow(it) },
-                    handleDeletePost = { onToggleDelete(it) }
+                    handleDeletePost = { onToggleDelete(it) },
                 )
-                PostBody(post = post)
+                PostBody(
+                    post = post,
+                    imageLoader = imageLoader
+                )
                 Spacer(modifier = Modifier.size(10.dp))
                 PostActions(
                     post = post,

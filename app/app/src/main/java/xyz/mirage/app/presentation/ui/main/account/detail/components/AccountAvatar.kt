@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -24,11 +25,12 @@ import xyz.mirage.app.presentation.core.theme.DarkBackgroundColor
 fun UserAvatar(
     url: String,
     modifier: Modifier,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    imageLoader: ImageLoader
 ) {
     val painter = rememberImagePainter(
         data = url,
-        builder = { crossfade(true) }
+        imageLoader = imageLoader,
     )
 
     Image(

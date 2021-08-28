@@ -2,6 +2,23 @@
 
 Mirage is a small [Twitter](https://twitter.com/) clone used to learn testing and [Jetpack Compose](https://developer.android.com/jetpack/compose).
 
+## Screenshots
+
+<table><tr>
+  <tr>
+    <td><img src="./assets/auth.gif" width="180"></td>
+    <td><img src="./assets/home.gif" width="180"></td>
+    <td><img src="./assets/postdetail.png" width="180"></td>
+    <td><img src="./assets/create.gif" width="180"></td>
+    </tr>
+    <tr>
+    <td><img src="./assets/profile.gif" width="180"></td>
+    <td><img src="./assets/search.gif" width="180"></td>
+    <td><img src="./assets/account.gif" width="180"></td>
+    <td><img src="./assets/darkmode.png" width="180"></td>
+  </tr>
+  </table>
+
 ## Features
 
 - Tweet CRUD
@@ -82,3 +99,13 @@ The app structure is based on [codingwithmitch's compose course](https://github.
 ### App
 
 To run the use case tests simply right click the `app` directory in the `test` directory and select `Run tests in 'xyz.mirage...'`
+
+---
+
+## Known Issues
+
+### App
+
+- Backstack keeps growing.
+  - Haven't found a good solution to that problem yet.
+- Screen transition animations flicker white when using dark mode.

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import xyz.mirage.app.business.domain.models.Post
 import xyz.mirage.app.presentation.core.util.DateUtils
-import java.util.*
 
 @Composable
 fun Username(
@@ -30,13 +29,6 @@ fun Username(
     handleDeletePost: (String) -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
-    val items = mutableListOf<String>()
-
-    when {
-        authId != post.profile.id && post.profile.following -> items.add("Unfollow")
-        authId != post.profile.id && !post.profile.following -> items.add("Follow")
-        authId == post.profile.id -> items.add("Delete")
-    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -89,21 +81,23 @@ fun Username(
                 expanded = showMenu,
                 onDismissRequest = { showMenu = false },
             ) {
-                items.forEach { option ->
+                if (authId != post.profile.id) {
                     DropdownMenuItem(
                         onClick = {
-                            when {
-                                option.lowercase(Locale.getDefault()).contains("follow") -> {
-                                    handleFollow(post.profile.username)
-                                }
-                                option == "Delete" -> {
-                                    handleDeletePost(post.id)
-                                }
-                            }
+                            handleFollow(post.profile.username)
                             showMenu = false
                         }
                     ) {
-                        Text(text = option)
+                        Text(text = if (post.profile.following) "Unfollow" else "Follow")
+                    }
+                } else {
+                    DropdownMenuItem(
+                        onClick = {
+                            handleDeletePost(post.id)
+                            showMenu = false
+                        }
+                    ) {
+                        Text(text = "Delete")
                     }
                 }
             }

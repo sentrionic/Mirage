@@ -95,7 +95,10 @@ fun AppTheme(
                 )
 
                 Column {
-                    ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
+                    ConnectivityMonitor(
+                        isNetworkAvailable = isNetworkAvailable,
+                        isDarkTheme = darkTheme
+                    )
                     content()
                 }
 

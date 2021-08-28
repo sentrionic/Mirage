@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -44,6 +45,7 @@ fun ProfileScreen(
     scaffoldState: ScaffoldState,
     refreshViewManager: RefreshViewManager,
     authId: String,
+    imageLoader: ImageLoader,
 ) {
     if (state.profile == null && !state.isLoading) {
         username?.let {
@@ -101,7 +103,8 @@ fun ProfileScreen(
                                 user.banner?.let { url ->
                                     UserBanner(
                                         url = url,
-                                        username = user.username
+                                        username = user.username,
+                                        imageLoader = imageLoader
                                     )
                                 } ?: Box(
                                     modifier = Modifier
@@ -113,7 +116,8 @@ fun ProfileScreen(
                                 UserAvatar(
                                     url = user.image,
                                     modifier = Modifier.align(Alignment.BottomStart),
-                                    isDarkTheme = isDarkTheme
+                                    isDarkTheme = isDarkTheme,
+                                    imageLoader = imageLoader
                                 )
 
                                 when {
@@ -233,7 +237,8 @@ fun ProfileScreen(
                                                     DeletePostEvent(it)
                                                 )
                                             },
-                                            isDarkTheme = isDarkTheme
+                                            isDarkTheme = isDarkTheme,
+                                            imageLoader = imageLoader
                                         )
                                     }
                                 }

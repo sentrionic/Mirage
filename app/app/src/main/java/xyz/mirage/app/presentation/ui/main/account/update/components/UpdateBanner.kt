@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
@@ -31,6 +32,7 @@ fun UpdateBanner(
     state: UpdateAccountState,
     modifier: Modifier,
     onTriggerEvent: (UpdateAccountEvents) -> Unit,
+    imageLoader: ImageLoader,
 ) {
     val cropLauncher = rememberLauncherForActivityResult(
         contract = CropImageContract()
@@ -62,7 +64,8 @@ fun UpdateBanner(
 
             UserBanner(
                 url = url.toString(),
-                username = user.username
+                username = user.username,
+                imageLoader = imageLoader
             )
         }
     }
