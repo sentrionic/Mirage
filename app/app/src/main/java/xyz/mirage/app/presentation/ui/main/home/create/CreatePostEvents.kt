@@ -13,5 +13,7 @@ sealed class CreatePostEvents {
 
     data class OnMessageReceived(val stateMessage: StateMessage) : CreatePostEvents()
 
+    object OnPushedBack : CreatePostEvents()
+
     object OnRemoveHeadFromQueue : CreatePostEvents()
 }

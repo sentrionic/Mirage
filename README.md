@@ -56,7 +56,7 @@ The app structure is based on [codingwithmitch's compose course](https://github.
 
 1. Install Docker and get the Postgresql and Redis containers
 2. Create a DB
-3. Install Golang and get all the dependencies
+3. Install Go 1.19 and get all the dependencies (`go mod tidy`)
 4. Rename `.env.example` to `.env` and fill in the values
 
 - `Required`

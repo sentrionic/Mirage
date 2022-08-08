@@ -41,7 +41,6 @@ object AppModule {
         return ImageLoader.Builder(app)
             .error(R.drawable.error_image)
             .placeholder(R.drawable.white_background)
-            .availableMemoryPercentage(0.25)
             .crossfade(true)
             .build()
     }

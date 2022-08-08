@@ -33,7 +33,7 @@ fun AuthTextField(
     isDarkTheme: Boolean,
     requester: FocusRequester? = null,
 ) {
-    val modifier = Modifier
+    var modifier = Modifier
         .fillMaxWidth()
         .onFocusChanged { focusState ->
             state.onFocusChange(focusState.isFocused)
@@ -43,7 +43,7 @@ fun AuthTextField(
         }
 
     if (requester != null) {
-        modifier.focusRequester(requester)
+        modifier = modifier.focusRequester(requester)
     }
 
     Row(

@@ -14,7 +14,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImagePainter
 import coil.compose.ImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.business.domain.models.Profile
 
@@ -26,8 +28,8 @@ fun Avatar(
     onNavigateToProfileScreen: () -> Unit
 ) {
 
-    val painter = rememberImagePainter(
-        data = profile.image,
+    val painter = rememberAsyncImagePainter(
+        profile.image,
         imageLoader = imageLoader,
     )
 
@@ -44,7 +46,7 @@ fun Avatar(
     )
 
     when (painter.state) {
-        is ImagePainter.State.Loading -> {
+        is AsyncImagePainter.State.Loading -> {
             Box(
                 modifier = Modifier
                     .clip(shape = CircleShape)

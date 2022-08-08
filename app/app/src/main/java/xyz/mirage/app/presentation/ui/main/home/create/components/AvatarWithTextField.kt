@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImagePainter
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.presentation.core.theme.PrimaryColor
@@ -59,7 +60,7 @@ fun AvatarWithTextField(
             )
 
             when (painter.state) {
-                is ImagePainter.State.Loading -> {
+                is AsyncImagePainter.State.Loading -> {
                     Box(
                         modifier = Modifier
                             .background(PrimaryColor)

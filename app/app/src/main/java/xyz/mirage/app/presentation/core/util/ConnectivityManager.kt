@@ -18,9 +18,9 @@ constructor(
     val isNetworkAvailable = mutableStateOf(false)
 
     fun registerConnectionObserver(lifecycleOwner: LifecycleOwner) {
-        connectionLiveData.observe(lifecycleOwner, { isConnected ->
+        connectionLiveData.observe(lifecycleOwner) { isConnected ->
             isConnected?.let { isNetworkAvailable.value = it }
-        })
+        }
     }
 
     fun unregisterConnectionObserver(lifecycleOwner: LifecycleOwner) {

@@ -54,6 +54,12 @@ constructor(
                 appendToMessageQueue(event.stateMessage)
             }
 
+            is OnPushedBack -> {
+                state.value.let { state ->
+                    this.state.value = state.copy(onPublishSuccess = false)
+                }
+            }
+
             is OnRemoveHeadFromQueue -> {
                 removeHeadMessage()
             }

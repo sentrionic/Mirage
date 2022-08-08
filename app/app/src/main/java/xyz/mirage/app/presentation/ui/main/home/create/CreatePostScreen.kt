@@ -1,5 +1,6 @@
 package xyz.mirage.app.presentation.ui.main.home.create
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,8 +16,7 @@ import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.presentation.core.theme.AppTheme
-import xyz.mirage.app.presentation.ui.main.home.create.CreatePostEvents.OnRemoveHeadFromQueue
-import xyz.mirage.app.presentation.ui.main.home.create.CreatePostEvents.PublishPost
+import xyz.mirage.app.presentation.ui.main.home.create.CreatePostEvents.*
 import xyz.mirage.app.presentation.ui.main.home.create.components.AvatarWithTextField
 import xyz.mirage.app.presentation.ui.main.home.create.components.CreateBar
 import xyz.mirage.app.presentation.ui.main.home.create.components.CreatePostAppBar
@@ -37,6 +37,7 @@ fun CreatePostScreen(
     val isDisabled = (!state.text.isValid || state.text.text.isEmpty()) && state.uri == null
 
     if (state.onPublishSuccess) {
+        onTriggerEvent(OnPushedBack)
         navController.popBackStack()
     }
 

@@ -8,8 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -56,7 +55,7 @@ fun Navigation(
     val navController = rememberAnimatedNavController()
     val scaffoldState = rememberScaffoldState()
 
-    sessionManager.state.observe(mainActivity, { state ->
+    sessionManager.state.observe(mainActivity) { state ->
         val route = when {
             state.uid != null -> Screen.Home.route
             state.didCheckForPreviousAuthUser -> Screen.Start.route
@@ -66,7 +65,7 @@ fun Navigation(
         navController.navigate(route) {
             popUpTo(0)
         }
-    })
+    }
 
     AnimatedNavHost(
         navController = navController,
@@ -82,10 +81,10 @@ fun Navigation(
 
         composable(
             route = Screen.Start.route,
-            exitTransition = { _, _ ->
+            exitTransition = {
                 slideExitTransition()
             },
-            popEnterTransition = { _, _ ->
+            popEnterTransition = {
                 slidePopEnterTransition()
             },
         ) {
@@ -97,10 +96,10 @@ fun Navigation(
 
         composable(
             route = Screen.Register.route,
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             }
         ) { navBackStackEntry ->
@@ -124,10 +123,10 @@ fun Navigation(
 
         composable(
             route = Screen.Login.route,
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             }
         ) { navBackStackEntry ->
@@ -152,8 +151,8 @@ fun Navigation(
         // -------------- Post Routes -----------------
         composable(
             route = Screen.Home.route,
-            exitTransition = { _, target ->
-                when (target.destination.route) {
+            exitTransition = {
+                when (targetState.destination.route) {
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}",
                     Screen.CreatePost.route ->
@@ -161,8 +160,8 @@ fun Navigation(
                     else -> null
                 }
             },
-            popEnterTransition = { initial, _ ->
-                when (initial.destination.route) {
+            popEnterTransition = {
+                when (initialState.destination.route) {
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}",
                     Screen.CreatePost.route ->
@@ -197,16 +196,16 @@ fun Navigation(
             arguments = listOf(navArgument("postId") {
                 type = NavType.StringType
             }),
-            exitTransition = { _, _ ->
+            exitTransition = {
                 slideExitTransition()
             },
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             },
-            popEnterTransition = { _, _ ->
+            popEnterTransition = {
                 slidePopEnterTransition()
             },
         ) { navBackStackEntry ->
@@ -230,10 +229,10 @@ fun Navigation(
 
         composable(
             route = Screen.CreatePost.route,
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             }
         ) { navBackStackEntry ->
@@ -256,16 +255,16 @@ fun Navigation(
         // -------------- Search Routes -----------------
         composable(
             route = Screen.Search.route,
-            exitTransition = { _, target ->
-                when (target.destination.route) {
+            exitTransition = {
+                when (targetState.destination.route) {
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}" ->
                         slideExitTransition()
                     else -> null
                 }
             },
-            popEnterTransition = { initial, _ ->
-                when (initial.destination.route) {
+            popEnterTransition = {
+                when (initialState.destination.route) {
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}" ->
                         slidePopEnterTransition()
@@ -299,16 +298,16 @@ fun Navigation(
             arguments = listOf(navArgument("username") {
                 type = NavType.StringType
             }),
-            exitTransition = { _, _ ->
+            exitTransition = {
                 slideExitTransition()
             },
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             },
-            popEnterTransition = { _, _ ->
+            popEnterTransition = {
                 slidePopEnterTransition()
             },
         ) { navBackStackEntry ->
@@ -333,8 +332,8 @@ fun Navigation(
         // -------------- Account Routes -----------------
         composable(
             route = Screen.Account.route,
-            exitTransition = { _, target ->
-                when (target.destination.route) {
+            exitTransition = {
+                when (targetState.destination.route) {
                     Screen.UpdateAccount.route + "/{id}",
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}" ->
@@ -342,8 +341,8 @@ fun Navigation(
                     else -> null
                 }
             },
-            popEnterTransition = { initial, _ ->
-                when (initial.destination.route) {
+            popEnterTransition = {
+                when (initialState.destination.route) {
                     Screen.UpdateAccount.route + "/{id}",
                     Screen.PostDetail.route + "/{postId}",
                     Screen.Profile.route + "/{username}" ->
@@ -378,10 +377,10 @@ fun Navigation(
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
             }),
-            enterTransition = { _, _ ->
+            enterTransition = {
                 slideEnterTransition()
             },
-            popExitTransition = { _, _ ->
+            popExitTransition = {
                 slidePopExitTransition()
             }
         ) { navBackStackEntry ->

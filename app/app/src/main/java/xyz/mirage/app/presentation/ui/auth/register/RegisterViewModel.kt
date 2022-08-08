@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import xyz.mirage.app.business.domain.core.KQueue
 import xyz.mirage.app.business.domain.core.StateMessage
 import xyz.mirage.app.business.domain.core.TAG
 import xyz.mirage.app.business.domain.core.doesMessageAlreadyExistInQueue
@@ -51,6 +52,7 @@ constructor(
             try {
                 val queue = state.queue
                 queue.remove() // can throw exception if empty
+                this.state.value = state.copy(queue = KQueue(mutableListOf()))
                 this.state.value = state.copy(queue = queue)
             } catch (e: Exception) {
                 Log.d(TAG, "removeHeadFromQueue: Nothing to remove from DialogQueue")

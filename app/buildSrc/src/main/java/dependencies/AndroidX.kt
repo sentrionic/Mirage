@@ -20,6 +20,4 @@ object AndroidX {
     const val room_ktx = "androidx.room:room-ktx:${Versions.room}"
 
     const val datastore = "androidx.datastore:datastore-preferences:${Versions.datastore}"
-
-    const val hilt_lifecycle_viewmodel ="androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hilt_lifecycle_viewmodel}"
 }

@@ -16,7 +16,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
+import coil.compose.AsyncImagePainter
 import coil.compose.ImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import xyz.mirage.app.business.domain.models.Post
 
@@ -34,8 +36,8 @@ fun PostBody(
 
     post.file?.let { file ->
 
-        val painter = rememberImagePainter(
-            data = file.url,
+        val painter = rememberAsyncImagePainter(
+            file.url,
             imageLoader = imageLoader,
         )
 
@@ -52,7 +54,7 @@ fun PostBody(
         )
 
         when (painter.state) {
-            is ImagePainter.State.Loading -> {
+            is AsyncImagePainter.State.Loading -> {
                 Box(
                     modifier = Modifier
                         .background(Color.Transparent)

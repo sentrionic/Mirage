@@ -21,7 +21,6 @@ plugins {
 
 android {
     compileSdkVersion Versions.compileSdk
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "xyz.mirage.app"
@@ -45,7 +44,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = Versions.jvmTarget
-        useIR = true
     }
     buildFeatures {
         compose true
@@ -76,7 +74,6 @@ dependencies {
     implementation AndroidX.room_runtime
     implementation AndroidX.room_ktx
     implementation AndroidX.datastore
-    implementation AndroidX.hilt_lifecycle_viewmodel
 
     implementation Coil.coil_compose
 

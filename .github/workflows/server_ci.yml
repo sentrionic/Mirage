@@ -2,20 +2,23 @@ name: Run unit & e2e tests
 
 on:
   push:
-    branches: [main]
+    paths:
+      - 'server/**'
   pull_request:
-    branches: [main]
+    paths:
+      - 'server/**'
 
 jobs:
   golangci:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: latest
+          args: --timeout=5m
           working-directory: ./server
   test:
     name: Test
@@ -23,7 +26,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12
+        image: postgres:alpine
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
@@ -45,13 +48,13 @@ jobs:
 
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.16
+          go-version: 1.119
         id: go
 
       - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Unit Tests
         working-directory: ./server
